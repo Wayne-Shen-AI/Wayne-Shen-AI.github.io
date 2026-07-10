@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Name · 个人主页</title>
+  <meta name="description" content="个人主页与作品展示" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #1a1a1a;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --accent: #111827;
+      --card: #ffffff;
+      --radius: 14px;
+      --maxw: 960px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      color: var(--fg);
+      background: var(--bg);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+
+    /* Nav */
+    header.nav {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: saturate(180%) blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .logo { font-weight: 700; letter-spacing: -0.02em; font-size: 18px; }
+    .nav-links { display: flex; gap: 28px; }
+    .nav-links a { color: var(--muted); font-size: 15px; transition: color .2s; }
+    .nav-links a:hover { color: var(--fg); }
+
+    /* Hero */
+    .hero { padding: 96px 0 72px; }
+    .hero .eyebrow { color: var(--muted); font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .hero h1 { font-size: 56px; line-height: 1.1; letter-spacing: -0.03em; margin: 16px 0 20px; font-weight: 800; }
+    .hero p.lead { font-size: 20px; color: var(--muted); max-width: 620px; }
+    .hero .cta { margin-top: 32px; display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 11px 22px; border-radius: 999px; font-size: 15px; font-weight: 600;
+      border: 1px solid var(--accent); transition: all .2s;
+    }
+    .btn.primary { background: var(--accent); color: #fff; }
+    .btn.primary:hover { opacity: .85; }
+    .btn.ghost { color: var(--accent); }
+    .btn.ghost:hover { background: #f3f4f6; }
+
+    /* Section */
+    section { padding: 64px 0; border-top: 1px solid var(--line); }
+    .sec-title { font-size: 14px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 8px; }
+    .sec-head { font-size: 32px; letter-spacing: -0.02em; font-weight: 800; margin-bottom: 40px; }
+
+    /* About */
+    .about p { font-size: 18px; color: #374151; max-width: 680px; margin-bottom: 16px; }
+
+    /* Works grid */
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .card {
+      background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+      overflow: hidden; display: flex; flex-direction: column; transition: transform .2s, box-shadow .2s;
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.08); }
+    .card .thumb {
+      aspect-ratio: 16 / 10; background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+      display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 14px;
+    }
+    .card .body { padding: 20px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+    .card h3 { font-size: 19px; letter-spacing: -0.01em; }
+    .card p { color: var(--muted); font-size: 15px; flex: 1; }
+    .tags { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tag { font-size: 12px; color: #374151; background: #f3f4f6; border-radius: 999px; padding: 4px 10px; }
+    .card-links { display: flex; gap: 16px; margin-top: 6px; }
+    .card-links a { font-size: 14px; font-weight: 600; color: var(--accent); }
+    .card-links a:hover { text-decoration: underline; }
+
+    /* Contact */
+    .contact-links { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 8px; }
+    .contact-links a { color: var(--muted); font-size: 16px; transition: color .2s; }
+    .contact-links a:hover { color: var(--fg); }
+
+    footer { padding: 40px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; text-align: center; }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 40px; }
+      .grid { grid-template-columns: 1fr; }
+      .nav-links { gap: 18px; }
+      .nav-links a { font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <div class="logo">Your Name</div>
+      <nav class="nav-links">
+        <a href="#about">关于</a>
+        <a href="#works">作品</a>
+        <a href="#contact">联系</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <div class="hero wrap">
+      <div class="eyebrow">Frontend Developer / 数据分析师</div>
+      <h1>你好，我是<br />Your Name。</h1>
+      <p class="lead">一句话定位：我用代码和数据把想法变成能跑起来的产品。这里是我的作品与思考。</p>
+      <div class="cta">
+        <a class="btn primary" href="#works">查看作品 →</a>
+        <a class="btn ghost" href="#contact">联系我</a>
+      </div>
+    </div>
+
+    <!-- About -->
+    <section id="about" class="about">
+      <div class="wrap">
+        <div class="sec-title">About</div>
+        <h2 class="sec-head">关于我</h2>
+        <p>这里写一段自我介绍占位文字。介绍你的背景、擅长的领域、正在做的事情。比如：3 年前端开发经验，专注于交互体验与数据可视化，喜欢把复杂的东西做简单。</p>
+        <p>可以再写一句你的价值主张或近期目标，让访客快速理解你能做什么、想做什么。</p>
+      </div>
+    </section>
+
+    <!-- Works -->
+    <section id="works">
+      <div class="wrap">
+        <div class="sec-title">Works</div>
+        <h2 class="sec-head">作品展示</h2>
+        <div class="grid">
+
+          <article class="card">
+            <div class="thumb">替换为项目封面图 (images/project-1.jpg)</div>
+            <div class="body">
+              <h3>项目一 · 示例标题</h3>
+              <p>一句话简介：这个项目解决了什么问题、你负责了什么、达成了什么效果。</p>
+              <div class="tags">
+                <span class="tag">React</span>
+                <span class="tag">TypeScript</span>
+                <span class="tag">可视化</span>
+              </div>
+              <div class="card-links">
+                <a href="https://github.com/yourname/project-1" target="_blank">查看代码</a>
+                <a href="https://yourname.github.io/project-1" target="_blank">在线演示</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="thumb">替换为项目封面图 (images/project-2.jpg)</div>
+            <div class="body">
+              <h3>项目二 · 示例标题</h3>
+              <p>一句话简介：描述项目亮点，突出你的角色与技术选型。</p>
+              <div class="tags">
+                <span class="tag">Python</span>
+                <span class="tag">数据分析</span>
+              </div>
+              <div class="card-links">
+                <a href="https://github.com/yourname/project-2" target="_blank">查看代码</a>
+                <a href="https://yourname.github.io/project-2" target="_blank">在线演示</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="thumb">替换为项目封面图 (images/project-3.jpg)</div>
+            <div class="body">
+              <h3>项目三 · 示例标题</h3>
+              <p>一句话简介：说明这个作品的成果或数据，比如用户量、性能提升等。</p>
+              <div class="tags">
+                <span class="tag">Node.js</span>
+                <span class="tag">全栈</span>
+              </div>
+              <div class="card-links">
+                <a href="https://github.com/yourname/project-3" target="_blank">查看代码</a>
+                <a href="https://yourname.github.io/project-3" target="_blank">在线演示</a>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact">
+      <div class="wrap">
+        <div class="sec-title">Contact</div>
+        <h2 class="sec-head">联系我</h2>
+        <p style="color: var(--muted); font-size: 18px; max-width: 620px;">欢迎交流合作机会，或者只是聊聊技术与产品。</p>
+        <div class="contact-links">
+          <a href="mailto:you@example.com">✉ you@example.com</a>
+          <a href="https://github.com/yourname" target="_blank">GitHub</a>
+          <a href="https://www.linkedin.com/in/yourname" target="_blank">LinkedIn</a>
+          <a href="https://twitter.com/yourname" target="_blank">X / Twitter</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">© <span id="year"></span> Your Name · Built with GitHub Pages</div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
