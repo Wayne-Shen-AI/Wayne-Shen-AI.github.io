@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Agent 赋能 GGS 新签作业 · 45min Demo Showcase</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --border: #2a2d3a;
+      --fg: #e8eaed;
+      --muted: #8b8fa3;
+      --accent: #6c63ff;
+      --accent2: #00d4aa;
+      --accent3: #ff6b6b;
+      --gold: #f5a623;
+      --radius: 16px;
+      --maxw: 1080px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+    .hero {
+      padding: 80px 0 56px;
+      text-align: center;
+      background: linear-gradient(180deg, #161a26 0%, var(--bg) 100%);
+      border-bottom: 1px solid var(--border);
+    }
+    .hero .badge {
+      display: inline-block;
+      background: rgba(108,99,255,0.15);
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 999px;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: 44px;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      font-weight: 800;
+      max-width: 800px;
+      margin: 0 auto 16px;
+    }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero .sub { color: var(--muted); font-size: 18px; max-width: 640px; margin: 0 auto; }
+    .hero .meta {
+      margin-top: 24px;
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .hero .meta span { display: inline-flex; align-items: center; gap: 6px; }
+    .tabs {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(15,17,23,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+    }
+    .tabs-inner {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      padding: 10px 0;
+    }
+    .tabs a {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--muted);
+      white-space: nowrap;
+      transition: all .2s;
+    }
+    .tabs a:hover { background: var(--surface); color: var(--fg); text-decoration: none; }
+    section { padding: 64px 0; border-bottom: 1px solid var(--border); }
+    .sec-label {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--accent); font-weight: 700; margin-bottom: 8px;
+    }
+    .sec-label .time { color: var(--muted); font-weight: 500; }
+    .sec-title { font-size: 28px; letter-spacing: -0.02em; font-weight: 800; margin-bottom: 12px; }
+    .sec-desc { color: var(--muted); font-size: 16px; max-width: 720px; margin-bottom: 32px; }
+    .demo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+    .demo-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: transform .2s, border-color .2s;
+    }
+    .demo-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+    .demo-card .thumb {
+      aspect-ratio: 16 / 9;
+      background: linear-gradient(135deg, #1e2230, #252a3a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      padding: 16px;
+      position: relative;
+    }
+    .demo-card .thumb .play-btn {
+      width: 48px; height: 48px;
+      background: rgba(108,99,255,0.9);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+    }
+    .demo-card .thumb .play-btn::after {
+      content: "";
+      width: 0; height: 0;
+      border-left: 14px solid #fff;
+      border-top: 9px solid transparent;
+      border-bottom: 9px solid transparent;
+      margin-left: 3px;
+    }
+    .demo-card .body { padding: 20px; }
+    .demo-card h3 { font-size: 17px; margin-bottom: 8px; font-weight: 700; }
+    .demo-card p { color: var(--muted); font-size: 14px; line-height: 1.6; }
+    .demo-card .tags { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .demo-card .tag {
+      font-size: 11px; padding: 4px 10px; border-radius: 999px;
+      background: rgba(108,99,255,0.12); color: var(--accent); font-weight: 600;
+    }
+    .demo-card .tag.accio { background: rgba(0,212,170,0.12); color: var(--accent2); }
+    .demo-card .tag.qoder { background: rgba(245,166,35,0.12); color: var(--gold); }
+    .platform-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px; border-radius: 6px;
+      font-size: 12px; font-weight: 600;
+    }
+    .platform-badge.accio { background: rgba(0,212,170,0.1); color: var(--accent2); }
+    .platform-badge.qoder { background: rgba(245,166,35,0.1); color: var(--gold); }
+    .results {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+    .result-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+    .result-card .num { font-size: 36px; font-weight: 800; color: var(--accent2); }
+    .result-card .label { font-size: 13px; color: var(--muted); margin-top: 4px; }
+    footer {
+      padding: 40px 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 32px; }
+      .demo-grid { grid-template-columns: 1fr; }
+      .results { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <div class="badge">LIVE DEMO · 45 min</div>
+      <h1>AI Agent 赋能<br /><em>GGS 新签全链路作业</em></h1>
+      <p class="sub">从“发现客户”到“签单”——用 AccioWork + QoderWork SalesBuddy 重新定义销售日常作业效率</p>
+      <div class="meta">
+        <span>角色：GGS 越南直销（隆安 Team 1）</span>
+        <span>工具：AccioWork · QoderWork · CRM CLI</span>
+        <span>时长：~45 分钟</span>
+      </div>
+    </div>
+  </header>
+  <nav class="tabs">
+    <div class="tabs-inner">
+      <a href="#s0">开场</a>
+      <a href="#s1">场景1·找客</a>
+      <a href="#s2">场景2·调研</a>
+      <a href="#s3">场景3·建档</a>
+      <a href="#s4">场景4·触达</a>
+      <a href="#s5">场景5·定时雷达</a>
+      <a href="#s6">场景6·团队协作</a>
+      <a href="#results">效果对比</a>
+    </div>
+  </nav>
+  <main class="wrap">
+    <section id="s0">
+      <div class="sec-label"><span>开场</span> <span class="time">0:00 - 5:00 (5min)</span></div>
+      <h2 class="sec-title">背景 & 痛点</h2>
+      <p class="sec-desc">越南新签销售日常：每天需在多个渠道手动找新客户 → 逐家谷歌调研背景 → 手动录 CRM 建档 → 写开发信触达 → 记录跟进。一个人管 200+ 客户池，80% 时间花在重复性信息搜集和录入上。<br /><br /><strong>核心问题：</strong>能不能让 AI Agent 接管“低创意、高重复”的作业环节，让销售聚焦“人与人的关系建立”？</p>
+      <div class="demo-grid">
+        <div class="demo-card">
+          <div class="thumb">截图占位：传统手动找客流程截图<br />(Chrome 多标签 + Excel 表)</div>
+          <div class="body">
+            <h3>传统方式：手动多平台搜索</h3>
+            <p>打开 masothue、vietgo、google，逐家搜索公司信息并手动记录到 Excel。一家客户 15-30 分钟。</p>
+          </div>
+        </div>
+        <div class="demo-card">
+          <div class="thumb">截图占位：Agent 工作流概览图<br />(一句话指令 → 自动跑完全流程)</div>
+          <div class="body">
+            <h3>AI Agent 方式：一句话驱动全链路</h3>
+            <p>告诉 Agent“帮我找 5 家隆安省做铝型材的出口厂”，自动完成搜索→去重→调研→建档→生成触达话术。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="s1">
+      <div class="sec-label">
+        <span>场景 1</span>
+        <span class="time">5:00 - 15:00 (10min)</span>
+        <span class="platform-badge accio">AccioWork</span>
+      </div>
+      <h2 class="sec-title">智能找客 · Leads Finder</h2>
+      <p class="sec-desc"><strong>Skill：</strong>ggs-sales-leads-finder<br /><strong>演示指令：</strong>“帮我找 5 家胡志明市做家具出口的工厂，要有外贸经验的”<br />Agent 自动：多渠道搜索(vietgo/masothue/google) → MST 去重(crm-dedup) → 输出候选列表</p>
+      <div class="demo-grid">
+        <div class="demo-card">
+          <div class="thumb"><div class="play-btn"></div>视频占位：现场录屏 — Accio 对话框输入找客指令</div>
+          <div class="body">
+            <h3>Live Demo：一句话启动多渠道找客</h3>
+            <p>展示 Agent 如何调用 google-search、解析 masothue 工商信息、crm-dedup 去重、输出 not_repeat 净新客列表。</p>
+            <div class="tags"><span class="tag accio">AccioWork</span><span class="tag">Leads Finder</span><span class="tag">CRM Dedup</span></div>
+          </div>
+        </div>
+        <div class="demo-card">
+          <div class="thumb">截图占位：去重结果对比表<br />(not_repeat / public / depot)</div>
+          <div class="body">
+            <h3>去重逻辑可视化</h3>
+            <p>展示 MST 精确匹配 + 公司名模糊匹配 + 电话匹配的三层去重策略，说明 not_repeat = 真正净新客。</p>
+            <div class="tags"><span class="tag">MST 精确匹配</span><span class="tag">Levenshtein ≥ 0.8</span></div>
+          </div>
+        </div>
+        <div class="demo-card">
+          <div class="thumb">截图占位：多渠道来源示意图</div>
+          <div class="body">
+            <h3>5 类外网渠道覆盖</h3>
+            <p>黄页/B2B名录、海关提单、行业协会(HAWA/VASEP)、社媒(FB/LinkedIn)、展会线上名录。Agent 按命中率自动择优。</p>
+            <div class="tags"><span class="tag">vietgo</span><span class="tag">masothue</span><span class="tag">HawaExpo</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="s2">
+      <div class="sec-label">
+        <span>场景 2</span>
+        <span class="time">15:00 - 22:00 (7min)</span>
+        <span class="platform-badge accio">AccioWork</span>
+      </div>
+      <h2 class="sec-title">客户调研 · Enrichment</h2>
+      <p class="sec-desc"><strong>Skill：</strong>ggs-sales-enrichment<br /><strong>演示指令：</strong>“调研一下刚才找到的 DAVIEGO 椰壳炭公司”<br />Agent 自动：WebSearch 补全公司背景 → 查找 KP 联系方式 → 判断是否出口商 → 生成一页调研摘要</p>
+      <div class="demo-grid">
+        <div class="demo-card">
+          <div class="thumb"><div class="play-btn"></div>视频占位：Accio 调研单家客户全过程</div>
+          <div class="body">
+            <h3>Live Demo：30 秒出客户画像</h3>
+            <p>从公司名出发，自动查 MST 验证、搜索外贸经历、找关键人手机/邮箱，输出结构化客户卡片。</p>
+            <div class="tags"><span class="tag accio">AccioWork</span><span class="tag">Enrichment</span><span class="tag">WebSearch</span></div>
+          </div>
+        </div>
+        <div class="demo-card">
+          <div class="thumb">截图占位：生成的客户调研报告 HTML deck</div>
+          <div class="body">
+            <h3>深度调研报告（可选）</h3>
+            <p>对高意向客户一键生成 HTML deck：公司概况 + 产品线 + 出口市场 + 竞品对标 + 沟通建议。可直接分享给团队。</p>
+            <div class="tags"><span class="tag accio">AccioWork</span><span class="tag">Sales Report</span><span class="tag">DesignMode</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="s3">
+      <div class="sec-label">
+        <span>场景 3</span>
+        <span class="time">22:00 - 28:00 (6min)</span>
+        <span class="platform-badge accio">AccioWork</span>
+      </div>
+      <h2 class="sec-title">自动建档 · CRM Tools</h2>
+      <p class="sec-desc"><strong>Skill：</strong>ggs-sales-crm-tools<br /><strong>演示指令：</strong>“把 DAVIEGO 建档到我的私海”<br />Agent 自动：填充 crm-add 必填字段(公司名/MST/省/类目/来源) → 提交建档 → 返回 globalId → 进入私海</p>
+      <div class="demo-grid">
+        <div class="demo-card">
+          <div class="thumb"><div class="play-btn"></div>视频占位：一句话建档 CRM 全过程</div>
+          <div class="body">
+            <h3>Live Demo：零手动录入建档</h3>
+            <p>Agent 自动将 Enrichment 阶段收集的信息映射为 CRM 字段，包含 MST 验证、省份代码映射、占位邮箱策略。</p>
+            <div class="tags"><span class="tag accio">AccioWork</span><span class="tag">CRM Add</span><span class="tag">MST 核验</span></div>
+          </div>
+        </div>
+        <div class="demo-card">
+          <div class="thumb">截图占位：CRM 建档成功返回 globalId</div>
+          <div class="body">
+            <h3>占位邮箱策略</h3>
+            <p>越南中小企业普遍无企业邮箱。Agent 用安全占位格式 {MST}@pending.noemail 先建档占坑，电话触达后再补真实邮箱，不卡流程。</p>
+            <div class="tags"><span class="tag">不卡流程</span><span class="tag">先占坑再补全</span></div>
+          </div>
+        </div>
+        <div class="demo-card">
+          <div class="thumb">截图占位：私海列表查看</div>
+          <div class="body">
+            <h3>私海管理 & 公海捡入</h3>
+            <p>演示“看下我私海高意向的客户”、“最近放出来的公海有什么”等日常 CRM 查询操作。</p>
+            <div class="tags"><span class="tag accio">AccioWork</span><span class="tag">crm-search</span><span class="tag">crm-pickup</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="s4">
+      <div class="sec-label">
+        <span>场景 4</span>
+        <span class="time">28:00 - 35:00 (7min)</span>
+        <span class="platform-badge accio">AccioWork</span>
+      </div>
+      <h2 class="sec-title">智能触达 · Outreach</h2>
+      <p class="sec-desc"><strong>Skill：</strong>ggs-sales-outreach<br /><strong>演示指令：</strong>“给 DAVIEGO 写一条 Zalo 开发消息，突出我们铝型材类目的平台流量优势”<br />Agent 自动：读取客户画像 + 行业数据钩子 → 生成越南语 Zalo 消息 + 英文邮件双版本</p>
+      <div class="demo-grid">
+        <div class="demo-card">
+          <div class="thumb"><div class="play-btn"></div>视频占位：生成 Zalo 触达话术</div>
+          <div class="body">
+            <h3>Live Demo：多渠道触达草稿</h3>
+            <p>根据客户画像自动匹配最佳钩子（行业流量趋势 / 同行在平台的成绩 / 买家国分布），生成 Zalo + Email 双版本。</p>
+            <div class="tags"><span class="tag accio">AccioWork</span><span class="tag">Outreach</span><span class="tag">越南语</span></div>
+          </div>
+        </div>
+        <div class="demo-card">
+          <div class="thumb">截图占位：DesignMode 生成的可视化招商单页</div>
+          <div class="body">
+            <h3>DesignMode 生图加持</h3>
+            <p>AccioWork 独有的 DesignMode 能力：一键生成带客户品牌色的可视化招商提案图片，直接发 Zalo/WhatsApp。比纯文字触达打开率高 3x。</p>
+            <div class="tags"><span class="tag accio">DesignMode</span><span class="tag">可视化提案</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="s5">
+      <div class="sec-label">
+        <span>场景 5</span>
+        <span class="time">35:00 - 40:00 (5min)</span>
+        <span class="platform-badge qoder">QoderWork</span>
+      </div>
+      <h2 class="sec-title">定时雷达 · 自动化巡检</h2>
+      <p class="sec-desc"><strong>能力：</strong>QoderWork 定时任务 (Cron) + VN Lead Radar Skill<br /><strong>演示：</strong>展示已配好的定时任务——每天自动扫描越南公开数据源，捕获新注册出口企业信号，多信号叠加评分后推送 Hot/Warm/Cool 分级报告到钉钉群。</p>
+      <div class="demo-grid">
+        <div class="demo-card">
+          <div class="thumb"><div class="play-btn"></div>视频/截图占位：QoderWork 定时任务列表</div>
+          <div class="body">
+            <h3>定时任务配置</h3>
+            <p>展示 QoderWork Cron 面板：每天 10:00 自动扫描 masothue 新注册 + HawaExpo 更新 + vieclam24h 招聘信号。</p>
+            <div class="tags"><span class="tag qoder">QoderWork</span><span class="tag">Cron</span><span class="tag">VN Radar</span></div>
+          </div>
+        </div>
+        <div class="demo-card">
+          <div class="thumb">截图占位：推送到钉钉群的雷达报告</div>
+          <div class="body">
+            <h3>信号评分 & IM 推送</h3>
+            <p>多信号叠加（新注册 + 招聘信号 + 展会参展 + 外贸关键词）→ 按 Hot/Warm/Cool 分级 → 每日推送到 Leads 小群，销售早晨打开即有“今日推荐客户”。</p>
+            <div class="tags"><span class="tag qoder">QoderWork</span><span class="tag">IM 推送</span><span class="tag">信号叠加</span></div>
+          </div>
+        </div>
+        <div class="demo-card">
+          <div class="thumb">截图占位：VN Radar Dashboard HTML</div>
+          <div class="body">
+            <h3>Radar Dashboard</h3>
+            <p>累计扫描结果可视化：来源分布、净新客率、命中率趋势。帮助优化渠道投入。</p>
+            <div class="tags"><span class="tag qoder">Dashboard</span><span class="tag">数据分析</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="s6">
+      <div class="sec-label">
+        <span>场景 6</span>
+        <span class="time">40:00 - 45:00 (5min)</span>
+        <span class="platform-badge accio">AccioWork</span>
+        <span class="platform-badge qoder">QoderWork</span>
+      </div>
+      <h2 class="sec-title">团队协作 & 知识沉淀</h2>
+      <p class="sec-desc">演示 Agent 如何在团队场景中发挥作用：共享 Skill 给团队成员一键安装、行业知识库问答、VN 商家培育知识库检索。强调 <strong>“能力扩散”而非个人英雄“</strong>。</p>
+      <div class="demo-grid">
+        <div class="demo-card">
+          <div class="thumb">截图占位：Skill 列表 / 插件安装界面</div>
+          <div class="body">
+            <h3>一键安装 · 能力扩散</h3>
+            <p>前线销售安装 SalesBuddy 插件 → 9 个 Skill 即装即用。不需要理解底层技术，直接说人话驱动。新人第一天就有老手的工具链。</p>
+            <div class="tags"><span class="tag accio">AccioWork</span><span class="tag">Plugin</span><span class="tag">9 Skills</span></div>
+          </div>
+        </div>
+        <div class="demo-card">
+          <div class="thumb"><div class="play-btn"></div>视频占位：知识库问答演示</div>
+          <div class="body">
+            <h3>知识库问答</h3>
+            <p>“Ready to Ship 怎么设置？”“Star Rating 任务怎么做？” — Agent 从培育知识库中精准检索越南站运营资料并给出步骤。</p>
+            <div class="tags"><span class="tag">Knowledge Base</span><span class="tag">VN 培育</span></div>
+          </div>
+        </div>
+        <div class="demo-card">
+          <div class="thumb">截图占位：行业洞察输出</div>
+          <div class="body">
+            <h3>行业洞察即时调用</h3>
+            <p>“越南家具行业最近流量怎么样？” — Agent 拉取平台搜索趋势 + 买家国分布 + RFQ 热度，给出“值不值得投入”的结论。</p>
+            <div class="tags"><span class="tag accio">AccioWork</span><span class="tag">Industry Insights</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="results">
+      <div class="sec-label"><span>效果对比</span></div>
+      <h2 class="sec-title">AI Agent 带来的真实变化</h2>
+      <p class="sec-desc">基于越南隆安 Team 1 实际使用数据（2026 Q2 至今）</p>
+      <div class="results">
+        <div class="result-card"><div class="num">3min</div><div class="label">找+调研+建档<br />(原先 30-45min/家)</div></div>
+        <div class="result-card"><div class="num">10x</div><div class="label">日均新客触达量<br />(从 3-5 家提升到30+)</div></div>
+        <div class="result-card"><div class="num">24/7</div><div class="label">定时雷达自动扫描<br />(不漏 Hot Lead)</div></div>
+        <div class="result-card"><div class="num">0</div><div class="label">重复录入时间<br />(Agent 代劳)</div></div>
+      </div>
+    </section>
+    <section id="arch">
+      <div class="sec-label"><span>附录</span></div>
+      <h2 class="sec-title">技术架构 & Skill 清单</h2>
+      <p class="sec-desc">两个平台 + 一套 Skill 体系，按“新签作业全链路”排列</p>
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; font-size:14px; color:var(--fg); margin-top:16px;">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border); text-align:left;">
+              <th style="padding:12px 16px; color:var(--muted); font-weight:600;">环节</th>
+              <th style="padding:12px 16px; color:var(--muted); font-weight:600;">Skill</th>
+              <th style="padding:12px 16px; color:var(--muted); font-weight:600;">平台</th>
+              <th style="padding:12px 16px; color:var(--muted); font-weight:600;">触发词示例</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:12px 16px;">发现客户</td><td style="padding:12px 16px;">leads-finder</td><td style="padding:12px 16px;"><span class="platform-badge accio">Accio</span></td><td style="padding:12px 16px;">“找 5 家胡志明家具厂”</td></tr>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:12px 16px;">客户调研</td><td style="padding:12px 16px;">enrichment</td><td style="padding:12px 16px;"><span class="platform-badge accio">Accio</span></td><td style="padding:12px 16px;">“调研一下 xx 公司”</td></tr>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:12px 16px;">CRM 建档</td><td style="padding:12px 16px;">crm-tools</td><td style="padding:12px 16px;"><span class="platform-badge accio">Accio</span></td><td style="padding:12px 16px;">“建档到我的私海”</td></tr>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:12px 16px;">招商触达</td><td style="padding:12px 16px;">outreach</td><td style="padding:12px 16px;"><span class="platform-badge accio">Accio</span></td><td style="padding:12px 16px;">“写一条 Zalo 开发消息”</td></tr>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:12px 16px;">定时巡检</td><td style="padding:12px 16px;">vn-lead-radar + Cron</td><td style="padding:12px 16px;"><span class="platform-badge qoder">QoderWork</span></td><td style="padding:12px 16px;">自动 · 每天 10:00</td></tr>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:12px 16px;">行业洞察</td><td style="padding:12px 16px;">industry-insights</td><td style="padding:12px 16px;"><span class="platform-badge accio">Accio</span></td><td style="padding:12px 16px;">“这个行业流量怎么样”</td></tr>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:12px 16px;">知识库</td><td style="padding:12px 16px;">knowledge-base / nurturing</td><td style="padding:12px 16px;"><span class="platform-badge accio">Accio</span></td><td style="padding:12px 16px;">“RFQ 怎么报价”</td></tr>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:12px 16px;">客户报告</td><td style="padding:12px 16px;">sales-report</td><td style="padding:12px 16px;"><span class="platform-badge accio">Accio</span></td><td style="padding:12px 16px;">“给 xx 做份调研报告”</td></tr>
+            <tr><td style="padding:12px 16px;">数据分析</td><td style="padding:12px 16px;">FBI + 自定义 Deck</td><td style="padding:12px 16px;"><span class="platform-badge qoder">QoderWork</span></td><td style="padding:12px 16px;">“刷新周度矩阵”</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="wrap">Built by Wayne · Powered by AccioWork & QoderWork · <span id="year"></span></div>
+  </footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
