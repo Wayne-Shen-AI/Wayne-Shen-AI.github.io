@@ -319,24 +319,32 @@
         <div class="demo-card">
           <div class="body">
             <h3>57 条 Leads 怎么进入我的私海？</h3>
-            <p style="margin-bottom:12px;">入海动作只有两种（互斥、穷尽）：</p>
+            <p style="margin-bottom:12px;">统一流程：<strong style="color:var(--fg);">Agent 公网找客 → Enrichment → CRM 撞库 → 分流入海</strong></p>
             <p style="font-size:14px;color:var(--muted);line-height:1.9;">
-              <strong style="color:var(--fg);">① Pick · 公海捡入 (54 条)</strong><br />
-              中台把 D&B / Panjiva / masothue 等多源数据批量导入公海 → 我用 AI Agent 筛选目标客户 → crm-pickup 一键捡入私海。<br /><br />
-              <strong style="color:var(--fg);">② Add · 纯新建档 (3 条)</strong><br />
-              Agent 在外网发现的全新线索（公海里不存在），通过 crm-add 直接新建进我的私海。
+              所有 57 条线索起点相同——AI Agent 在公网（masothue / Panjiva / Google / 行业协会 / FB 群组等）主动发现目标企业，完成背调补全后，用 <strong style="color:var(--fg);">crm-dedup 撞库</strong> 判断公海是否已有该公司：
             </p>
+            <div style="margin-top:14px;display:flex;gap:12px;flex-wrap:wrap;">
+              <div style="flex:1;min-width:200px;padding:14px 16px;background:rgba(13,148,136,0.04);border-radius:10px;border:1px solid var(--border);">
+                <p style="font-size:14px;font-weight:700;color:var(--fg);margin-bottom:6px;">撞到 → Pick (54 条)</p>
+                <p style="font-size:13px;color:var(--muted);line-height:1.7;">公海里已有记录（中台此前导入的 D&B / Panjiva 数据），Agent 用 crm-pickup 一键捡入我的私海。</p>
+              </div>
+              <div style="flex:1;min-width:200px;padding:14px 16px;background:rgba(37,99,235,0.04);border-radius:10px;border:1px solid var(--border);">
+                <p style="font-size:14px;font-weight:700;color:var(--fg);margin-bottom:6px;">没撞到 → Add (3 条)</p>
+                <p style="font-size:13px;color:var(--muted);line-height:1.7;">公海里完全不存在的净新企业，Agent 通过 crm-add 直接新建进我的私海。</p>
+              </div>
+            </div>
             <div style="margin-top:16px;padding:12px 16px;background:rgba(37,99,235,0.04);border-radius:10px;border:1px solid var(--border);">
-              <p style="font-size:13px;color:var(--fg);font-weight:600;margin-bottom:6px;">AI 在哪个环节辅助？</p>
+              <p style="font-size:13px;color:var(--fg);font-weight:600;margin-bottom:6px;">关键认知</p>
               <p style="font-size:13px;color:var(--muted);line-height:1.8;">
-                <strong style="color:var(--accent);">Pick 之前：</strong>Agent 帮我从公海大池子里按行业/地区/规模筛选 → 背调信息补全（Enrichment）→ 再决定捡哪些。<br />
-                <strong style="color:var(--accent);">Add 之前：</strong>Agent 先在外网发现 → 调研 + 补全联系方式 → 确认净新客后才建档。
+                <strong style="color:var(--accent);">起点统一：</strong>57 条全部由 Agent 从公网主动搜索发现（Leads Finder skill），不是被动等公海分发。<br />
+                <strong style="color:var(--accent);">撞库决定路径：</strong>pick vs add 的区别仅取决于 crm-dedup 的结果——绝大多数企业已被中台批量灌入公海，所以 pick 占 95%。<br />
+                <strong style="color:var(--accent);">Enrichment 前置：</strong>不管最终 pick 还是 add，Agent 都已提前完成信息补全（联系方式 / KP / 出口资质），入海即可跟进。
               </p>
             </div>
             <div class="tags" style="margin-top:14px;">
-              <span class="tag accio">Pick 54</span>
-              <span class="tag accio">Add 3</span>
-              <span class="tag">AI 筛选 + Enrichment</span>
+              <span class="tag accio">公网找客 57</span>
+              <span class="tag">撞库 → Pick 54</span>
+              <span class="tag">净新 → Add 3</span>
             </div>
           </div>
         </div>
