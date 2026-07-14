@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>h.shen 私海客户全景 Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'PingFang SC', sans-serif;
+  background: #f7f9ff;
+  color: #1e293b;
+  min-height: 100vh;
+  padding: 24px;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #dfe6f2;
+}
+.header h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e293b;
+}
+.header .meta {
+  font-size: 13px;
+  color: #5b6b85;
+}
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.kpi-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #dfe6f2;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.04);
+}
+.kpi-card .label {
+  font-size: 12px;
+  color: #5b6b85;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+.kpi-card .value {
+  font-size: 28px;
+  font-weight: 800;
+  color: #0d9488;
+}
+.kpi-card .sub {
+  font-size: 12px;
+  color: #5b6b85;
+  margin-top: 4px;
+}
+.charts-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.chart-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #dfe6f2;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.04);
+}
+.chart-card h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 16px;
+}
+.chart-container {
+  width: 100%;
+  height: 240px;
+}
+.table-section {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #dfe6f2;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.04);
+}
+.table-section h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 16px;
+}
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.filter-btn {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid #dfe6f2;
+  background: transparent;
+  color: #5b6b85;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.filter-btn:hover, .filter-btn.active {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+th {
+  text-align: left;
+  padding: 10px 12px;
+  color: #5b6b85;
+  font-weight: 600;
+  border-bottom: 1px solid #dfe6f2;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f4fa;
+  color: #1e293b;
+}
+tr:hover td {
+  background: rgba(37,99,235,0.03);
+}
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.badge-a { background: #dbeafe; color: #1d4ed8; }
+.badge-b { background: #d1fae5; color: #047857; }
+.badge-ba { background: #ccfbf1; color: #0d9488; }
+.badge-c { background: #fef3c7; color: #92400e; }
+.badge-cc { background: #fde68a; color: #78350f; }
+.badge-d { background: #fecaca; color: #dc2626; }
+.badge-new { background: #f1f5f9; color: #64748b; }
+.badge-signed { background: #d1fae5; color: #065f46; }
+.badge-paid { background: #dbeafe; color: #1e40af; }
+.tag-website {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  margin-right: 4px;
+}
+.tag-no-website {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #cbd5e1;
+  margin-right: 4px;
+}
+.today-tag {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 600;
+  margin-left: 6px;
+}
+@media (max-width: 768px) {
+  .kpi-row { grid-template-columns: repeat(2, 1fr); }
+  .charts-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>私海客户全景 — h.shen</h1>
+  <div class="meta">数据截至 2026-07-14 | salesId: h.shen | orgId: 303490502 | LongAn-Team 1</div>
+</div>
+
+<div class="kpi-row">
+  <div class="kpi-card">
+    <div class="label">总客户数</div>
+    <div class="value">57</div>
+    <div class="sub">私海在管</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">有官网</div>
+    <div class="value">42</div>
+    <div class="sub">73.7% 有数字化触点</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">高意向 (A/B/BA)</div>
+    <div class="value">10</div>
+    <div class="sub">17.5% 优质管道</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">已签约/付费</div>
+    <div class="value">4</div>
+    <div class="sub">I 或 O 状态</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">今日新增</div>
+    <div class="value" style="color:#2563eb">12</div>
+    <div class="sub">公海捡入+enrich</div>
+  </div>
+</div>
+
+<div class="charts-row">
+  <div class="chart-card">
+    <h3>意向等级分布</h3>
+    <div class="chart-container" id="chart-degree"></div>
+  </div>
+  <div class="chart-card">
+    <h3>行业/品类分布</h3>
+    <div class="chart-container" id="chart-industry"></div>
+  </div>
+  <div class="chart-card">
+    <h3>入库时间趋势</h3>
+    <div class="chart-container" id="chart-timeline"></div>
+  </div>
+</div>
+
+<div class="table-section">
+  <h3>客户明细</h3>
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterTable('all')">全部 (57)</button>
+    <button class="filter-btn" onclick="filterTable('high')">高意向 A/B (10)</button>
+    <button class="filter-btn" onclick="filterTable('today')">今日新增 (12)</button>
+    <button class="filter-btn" onclick="filterTable('signed')">已签约 (4)</button>
+    <button class="filter-btn" onclick="filterTable('nowebsite')">无官网 (15)</button>
+  </div>
+  <table id="customer-table">
+    <thead>
+      <tr>
+        <th>公司名</th>
+        <th>意向</th>
+        <th>签约</th>
+        <th>品类</th>
+        <th>官网</th>
+        <th>MST</th>
+        <th>入库时间</th>
+      </tr>
+    </thead>
+    <tbody id="table-body">
+    </tbody>
+  </table>
+</div>
+
+<script>
+const customers = [
+  {gid:"4008154307",name:"ASPIMEX (An Son Phat)",degree:"D",status:"N",member:"",mst:"0314234150",website:"aspimex.com",category:"果蔬干/农产品",created:"2018-01",today:true},
+  {gid:"4663642970",name:"TEXRAY (VN) CO., LTD",degree:"-1",status:"N",member:"",mst:"1101720623",website:"",category:"纺织",created:"2026-01",today:false},
+  {gid:"4558511431",name:"D&T CONCEPT CO., LTD",degree:"C",status:"N",member:"",mst:"0314351552",website:"",category:"贸易",created:"2024-12",today:false},
+  {gid:"4504852234",name:"NÔNG SẢN VIỆT THẮNG",degree:"B",status:"N",member:"",mst:"1101956322",website:"nongsanvietthang.vn",category:"农产品",created:"2024-07",today:false},
+  {gid:"4694034126",name:"HỒNG CÚC FRUITS FARM",degree:"-1",status:"N",member:"",mst:"2200825040",website:"hongcucfruitsfarm.com",category:"热带水果出口",created:"2024-12",today:true},
+  {gid:"4646048890",name:"HOA LAM / SUNCOMUS",degree:"-1",status:"N",member:"",mst:"1101651271",website:"suncomus.com",category:"宠物玩具/注塑",created:"2026-03",today:true},
+  {gid:"4504711369",name:"LONG AN VN FOOD CO., LTD",degree:"C",status:"N",member:"",mst:"1102056162",website:"",category:"食品",created:"2024-07",today:false},
+  {gid:"4152055599",name:"HUY THỊNH PHÁT EXIM",degree:"BA",status:"N",member:"",mst:"1300929926",website:"huythinhphat.com",category:"椰棕制品",created:"2021-02",today:true},
+  {gid:"4175277425",name:"LASGE (May Xuất Khẩu Long An)",degree:"C",status:"N",member:"",mst:"1100478948",website:"lasge.com.vn",category:"成衣出口",created:"2021-06",today:false},
+  {gid:"4550668708",name:"RAFI (户外家具)",degree:"-1",status:"N",member:"",mst:"0312444628",website:"rafi.vn",category:"户外HDPE家具",created:"2025-01",today:true},
+  {gid:"2478444048",name:"SEN VIỆT PLASTIC",degree:"C",status:"N",member:"",mst:"1101831309",website:"senviet.net.vn",category:"PP/PE包装袋",created:"2017-04",today:true},
+  {gid:"4494467272",name:"MUDOO VIETNAM TEXTILE",degree:"C",status:"N",member:"",mst:"1102056525",website:"",category:"纺织",created:"2024-06",today:false},
+  {gid:"4498145927",name:"COOYA TEXTILE CO., LTD",degree:"C",status:"N",member:"",mst:"1102058032",website:"hongyuan.com.vn",category:"纺织",created:"2024-06",today:false},
+  {gid:"4622438258",name:"QUAN LONG AGRICULTURAL",degree:"CC",status:"N",member:"",mst:"1102100862",website:"",category:"农业",created:"2025-10",today:false},
+  {gid:"4663642037",name:"QUANG VIET GARMENT",degree:"CC",status:"N",member:"",mst:"1101800420",website:"",category:"成衣",created:"2026-01",today:false},
+  {gid:"4544883480",name:"SAPPHIRE PACKAGING",degree:"-1",status:"N",member:"",mst:"0318560370",website:"sapphirevn.com",category:"环保购物袋",created:"2024-12",today:true},
+  {gid:"4351349785",name:"ĐỨC VINH (Cold Room)",degree:"CC",status:"N",member:"",mst:"1102008169",website:"ducvinhcoldroom.com",category:"农产品冷库",created:"2023-03",today:true},
+  {gid:"4744107149",name:"DAVIEGO (XNK)",degree:"-1",status:"N",member:"",mst:"1801831569",website:"daviego.com",category:"出口贸易",created:"2026-07",today:false},
+  {gid:"4728127427",name:"VŨ ANH TRẦM HƯƠNG",degree:"-1",status:"N",member:"",mst:"0319057321",website:"",category:"沉香",created:"2026-04",today:false},
+  {gid:"4645988907",name:"VIETNAM COCONUT DREAM (COCO-NAT)",degree:"-1",status:"N",member:"",mst:"0313003168",website:"",category:"椰壳工艺品",created:"2026-03",today:true},
+  {gid:"4539336497",name:"SONG TRINH XNK",degree:"CC",status:"N",member:"",mst:"1102035677",website:"baobisongtrinh.com.vn",category:"尼龙袋",created:"2024-11",today:true},
+  {gid:"4094927162",name:"TUNG HO THÉP VIỆT NAM",degree:"C",status:"N",member:"",mst:"3500791394",website:"thsvc.com.vn",category:"钢铁",created:"2020-06",today:false},
+  {gid:"4603613591",name:"KURABE INDUSTRIAL (VN)",degree:"C",status:"N",member:"",mst:"3700358942",website:"kurabe.co.jp",category:"工业电线",created:"2025-07",today:false},
+  {gid:"4646286057",name:"ATC MACHINERY TOOL",degree:"-1",status:"N",member:"",mst:"0315875196",website:"atcmachinery.com",category:"机械工具",created:"2026-03",today:false},
+  {gid:"4017827790",name:"SHIRAI VIETNAM",degree:"CC",status:"N",member:"",mst:"3600816236",website:"shirai-s.com",category:"制造",created:"2018-07",today:false},
+  {gid:"4494457251",name:"CHANG YANG MATERIAL",degree:"C",status:"N",member:"",mst:"1101762013",website:"",category:"材料",created:"2024-06",today:false},
+  {gid:"4542265793",name:"KINGMORE RACKING VN",degree:"B",status:"N",member:"",mst:"3502409017",website:"kingmorerack.com",category:"仓储货架",created:"2024-12",today:false},
+  {gid:"4002709977",name:"TSUCHIYA TSCO (VN)",degree:"C",status:"N",member:"",mst:"3700433646",website:"tsuchiya-tscovn.com",category:"制造",created:"2017-09",today:false},
+  {gid:"4396910015",name:"VINH THANH STEEL",degree:"C",status:"N",member:"",mst:"1100785748",website:"thepvinhthanh.com",category:"钢铁",created:"2023-04",today:false},
+  {gid:"4491730296",name:"APRO ACCURACY",degree:"C",status:"N",member:"",mst:"3603725851",website:"aproengineering.com",category:"精密加工",created:"2024-05",today:false},
+  {gid:"2060169819",name:"DONG THIEN NGHI GARMENT",degree:"C",status:"N",member:"",mst:"1100676763",website:"dongthiennghi.com.vn",category:"成衣/刺绣",created:"2015-02",today:false},
+  {gid:"2480526960",name:"ASG GLOBAL",degree:"C",status:"N",member:"",mst:"1101737955",website:"asgglobal.com",category:"全球贸易",created:"2017-04",today:false},
+  {gid:"4743797301",name:"TUONG HOA IMEX",degree:"-1",status:"N",member:"",mst:"0315663480",website:"tuonghoa-imex.com",category:"进出口",created:"2026-07",today:false},
+  {gid:"4496711398",name:"DAE-DO PAPER TUBE VN",degree:"B",status:"N",member:"",mst:"3600979061",website:"daedo.com.vn",category:"纸管",created:"2024-06",today:false},
+  {gid:"4517592764",name:"AIDO INDUSTRY VN",degree:"-1",status:"N",member:"",mst:"3602947410",website:"aido-ind.vn",category:"工业制造",created:"2024-10",today:false},
+  {gid:"4100712647",name:"LAFOOCO (Chế Biến XK Long An)",degree:"B",status:"I",member:"tp",mst:"1100107301",website:"lafooco.vn",category:"腰果加工出口",created:"2020-06",today:false},
+  {gid:"4101586743",name:"DTI PLASTIC (Đạt Thành)",degree:"C",status:"I",member:"PM.DISABLE",mst:"1101859657",website:"dti-plastic.com",category:"塑料制品OEM",created:"2020-06",today:true},
+  {gid:"4316313722",name:"VIDA FARM (VN XNK)",degree:"CC",status:"I",member:"PM.DISABLE",mst:"0317370088",website:"vidafarm.vn",category:"果蔬粉/花草茶",created:"2022-07",today:true},
+  {gid:"4585300897",name:"TRUC MOC INTERIOR",degree:"CC",status:"N",member:"",mst:"1102097680",website:"trucmocinterior.com.vn",category:"室内家具",created:"2025-05",today:false},
+  {gid:"4350672583",name:"CHAN HUNG WOOD",degree:"C",status:"N",member:"",mst:"1102013659",website:"",category:"木制品",created:"2023-03",today:false},
+  {gid:"4145130508",name:"ISLAND OAK VN",degree:"C",status:"N",member:"",mst:"1101808902",website:"islandoak.com.vn",category:"家具",created:"2021-02",today:false},
+  {gid:"4108590424",name:"THANH THU FURNITURE",degree:"C",status:"N",member:"",mst:"3701770098",website:"dogothanhthu.com",category:"家具",created:"2020-04",today:false},
+  {gid:"4646477025",name:"TRONG KHANG PLASTIC",degree:"-1",status:"N",member:"",mst:"1101867489-001",website:"",category:"塑料",created:"2026-03",today:false},
+  {gid:"4180924003",name:"BAO BÌ THÀNH LONG",degree:"C",status:"N",member:"",mst:"1100841713",website:"baobithanhlong.com",category:"包装",created:"2021-06",today:false},
+  {gid:"4509618130",name:"LA GREEN WORLD XNK",degree:"C",status:"N",member:"",mst:"1102022808",website:"lagreenworld.com",category:"绿色产品",created:"2024-08",today:false},
+  {gid:"4232524347",name:"ĐẠT QUANG MINH",degree:"CC",status:"N",member:"",mst:"1101033701",website:"datquangminh.net",category:"建筑/贸易",created:"2022-12",today:false},
+  {gid:"4498126277",name:"HẢI ĐĂNG FOOD",degree:"-1",status:"N",member:"",mst:"1101935763",website:"haidanghn.vn",category:"食品",created:"2024-06",today:false},
+  {gid:"4711391094",name:"MAY MẶC TRÍ TÂM",degree:"-1",status:"N",member:"",mst:"1102156343",website:"",category:"成衣出口",created:"2026-02",today:false},
+  {gid:"4557956501",name:"JOLIFLAIR JSC",degree:"-1",status:"N",member:"",mst:"0317865210",website:"joliflair.com",category:"消费品",created:"2025-02",today:false},
+  {gid:"4603658434",name:"VINASINO ELECTRICAL",degree:"-1",status:"N",member:"",mst:"1100883174",website:"vinasino.vn",category:"电气设备",created:"2025-07",today:false},
+  {gid:"4388782028",name:"TRONG NHAN SEAFOOD",degree:"C",status:"N",member:"",mst:"1101978213",website:"trongnhanseafoods.com",category:"海鲜出口",created:"2023-04",today:false},
+  {gid:"4663637344",name:"NAM HUNG METAL",degree:"BA",status:"N",member:"",mst:"1101685873",website:"namhungmetal.com",category:"金属制品",created:"2026-01",today:false},
+  {gid:"2525100391",name:"OASIS GARMENT",degree:"D",status:"N",member:"",mst:"0302776085",website:"oasisgarment.com",category:"成衣",created:"2017-07",today:false},
+  {gid:"312775099",name:"PPJ INTERNATIONAL (Phong Phú)",degree:"B",status:"O",member:"D",mst:"0304995318",website:"ppj-international.com",category:"成衣出口",created:"2010-03",today:false},
+  {gid:"4745174116",name:"GLOBAL FOOD ASIA",degree:"-1",status:"N",member:"",mst:"0319256278",website:"globalfoodasia.vn",category:"食品出口",created:"2026-07",today:false},
+  {gid:"4496814928",name:"MAKER SIXTY FOUR",degree:"C",status:"N",member:"",mst:"1100852810",website:"makersixtyfour.com",category:"制造",created:"2024-06",today:false},
+  {gid:"4326061652",name:"VASIFOOD TRADING",degree:"B",status:"N",member:"",mst:"1101752368",website:"vasifood.com.vn",category:"食品贸易",created:"2022-08",today:false}
+];
+
+// Render table
+function renderTable(filter) {
+  const tbody = document.getElementById('table-body');
+  let filtered = customers;
+  if (filter === 'high') filtered = customers.filter(c => ['A','B','BA'].includes(c.degree));
+  else if (filter === 'today') filtered = customers.filter(c => c.today);
+  else if (filter === 'signed') filtered = customers.filter(c => c.status === 'I' || c.status === 'O');
+  else if (filter === 'nowebsite') filtered = customers.filter(c => !c.website);
+
+  tbody.innerHTML = filtered.map(c => {
+    const degreeClass = c.degree === 'A' ? 'badge-a' : c.degree === 'B' ? 'badge-b' : c.degree === 'BA' ? 'badge-ba' : c.degree === 'C' ? 'badge-c' : c.degree === 'CC' ? 'badge-cc' : c.degree === 'D' ? 'badge-d' : 'badge-new';
+    const degreeLabel = c.degree === '-1' ? '新' : c.degree;
+    const statusLabel = c.status === 'I' ? '<span class="badge badge-signed">已签</span>' : c.status === 'O' ? '<span class="badge badge-paid">付费</span>' : '';
+    const websiteIcon = c.website ? `<span class="tag-website"></span><a href="https://${c.website}" target="_blank" style="color:#2563eb;text-decoration:none;font-size:12px">${c.website.length > 22 ? c.website.slice(0,22)+'...' : c.website}</a>` : '<span class="tag-no-website"></span><span style="color:#94a3b8;font-size:12px">无</span>';
+    const todayTag = c.today ? '<span class="today-tag">今日</span>' : '';
+    return `<tr data-degree="${c.degree}" data-today="${c.today}" data-status="${c.status}" data-website="${!!c.website}">
+      <td>${c.name}${todayTag}</td>
+      <td><span class="badge ${degreeClass}">${degreeLabel}</span></td>
+      <td>${statusLabel}</td>
+      <td>${c.category}</td>
+      <td>${websiteIcon}</td>
+      <td style="font-size:11px;color:#5b6b85">${c.mst}</td>
+      <td style="font-size:11px;color:#5b6b85">${c.created}</td>
+    </tr>`;
+  }).join('');
+}
+
+function filterTable(type) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderTable(type);
+}
+
+renderTable('all');
+
+// Charts
+// 1. Degree distribution
+const degreeCounts = {};
+customers.forEach(c => {
+  const d = c.degree === '-1' ? '新(未评级)' : c.degree;
+  degreeCounts[d] = (degreeCounts[d] || 0) + 1;
+});
+const degreeChart = echarts.init(document.getElementById('chart-degree'));
+degreeChart.setOption({
+  tooltip: { trigger: 'item' },
+  color: ['#2563eb','#0d9488','#14b8a6','#d97706','#ea580c','#ef4444','#94a3b8'],
+  series: [{
+    type: 'pie',
+    radius: ['40%', '70%'],
+    label: { color: '#1e293b', fontSize: 11 },
+    data: Object.entries(degreeCounts).map(([name, value]) => ({ name, value }))
+  }]
+});
+
+// 2. Industry distribution
+const industryCounts = {};
+customers.forEach(c => {
+  const cat = c.category.split('/')[0].split('(')[0];
+  industryCounts[cat] = (industryCounts[cat] || 0) + 1;
+});
+const sortedIndustry = Object.entries(industryCounts).sort((a,b) => b[1] - a[1]).slice(0, 10);
+const industryChart = echarts.init(document.getElementById('chart-industry'));
+industryChart.setOption({
+  tooltip: { trigger: 'axis' },
+  grid: { left: 80, right: 20, top: 10, bottom: 30 },
+  xAxis: { type: 'value', axisLabel: { color: '#5b6b85' }, splitLine: { lineStyle: { color: '#f0f4fa' } } },
+  yAxis: { type: 'category', data: sortedIndustry.map(i => i[0]).reverse(), axisLabel: { color: '#1e293b', fontSize: 11 } },
+  series: [{
+    type: 'bar',
+    data: sortedIndustry.map(i => i[1]).reverse(),
+    itemStyle: { color: '#2563eb', borderRadius: [0, 4, 4, 0] },
+    barWidth: 16
+  }]
+});
+
+// 3. Timeline
+const timelineCounts = {};
+customers.forEach(c => {
+  const ym = c.created;
+  timelineCounts[ym] = (timelineCounts[ym] || 0) + 1;
+});
+const sortedTimeline = Object.entries(timelineCounts).sort((a,b) => a[0].localeCompare(b[0]));
+const timelineChart = echarts.init(document.getElementById('chart-timeline'));
+timelineChart.setOption({
+  tooltip: { trigger: 'axis' },
+  grid: { left: 40, right: 20, top: 10, bottom: 30 },
+  xAxis: { type: 'category', data: sortedTimeline.map(t => t[0]), axisLabel: { color: '#5b6b85', fontSize: 10, rotate: 45 }, axisTick: { show: false } },
+  yAxis: { type: 'value', axisLabel: { color: '#5b6b85' }, splitLine: { lineStyle: { color: '#f0f4fa' } } },
+  series: [{
+    type: 'bar',
+    data: sortedTimeline.map(t => t[1]),
+    itemStyle: { color: '#0d9488', borderRadius: [4, 4, 0, 0] },
+    barWidth: 12
+  }]
+});
+
+window.addEventListener('resize', () => {
+  degreeChart.resize();
+  industryChart.resize();
+  timelineChart.resize();
+});
+</script>
+</body>
+</html>
