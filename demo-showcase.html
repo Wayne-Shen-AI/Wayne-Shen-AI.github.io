@@ -6,15 +6,15 @@
   <title>AI Agent 赋能 GGS 新签作业 · 45min Demo Showcase</title>
   <style>
     :root {
-      --bg: #0f1117;
-      --surface: #1a1d27;
-      --border: #2a2d3a;
-      --fg: #e8eaed;
-      --muted: #8b8fa3;
-      --accent: #6c63ff;
-      --accent2: #00d4aa;
-      --accent3: #ff6b6b;
-      --gold: #f5a623;
+      --bg: #f7f9ff;
+      --surface: #ffffff;
+      --border: #dfe6f2;
+      --fg: #1e293b;
+      --muted: #5b6b85;
+      --accent: #2563eb;
+      --accent2: #0d9488;
+      --accent3: #ef4444;
+      --gold: #d97706;
       --radius: 16px;
       --maxw: 1080px;
     }
@@ -35,12 +35,12 @@
     .hero {
       padding: 80px 0 56px;
       text-align: center;
-      background: linear-gradient(180deg, #161a26 0%, var(--bg) 100%);
+      background: linear-gradient(180deg, #edf2ff 0%, var(--bg) 100%);
       border-bottom: 1px solid var(--border);
     }
     .hero .badge {
       display: inline-block;
-      background: rgba(108,99,255,0.15);
+      background: rgba(37,99,235,0.1);
       color: var(--accent);
       font-size: 13px;
       font-weight: 600;
@@ -72,7 +72,7 @@
     /* Nav Tabs */
     .tabs {
       position: sticky; top: 0; z-index: 10;
-      background: rgba(15,17,23,0.92);
+      background: rgba(247,249,255,0.92);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
       padding: 0 24px;
@@ -114,12 +114,13 @@
       border: 1px solid var(--border);
       border-radius: var(--radius);
       overflow: hidden;
-      transition: transform .2s, border-color .2s;
+      transition: transform .2s, border-color .2s, box-shadow .2s;
+      box-shadow: 0 2px 8px rgba(37,99,235,0.04);
     }
-    .demo-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+    .demo-card:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: 0 8px 24px rgba(37,99,235,0.08); }
     .demo-card .thumb {
       aspect-ratio: 16 / 9;
-      background: linear-gradient(135deg, #1e2230, #252a3a);
+      background: linear-gradient(135deg, #edf2ff, #f0f4fa);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -131,7 +132,7 @@
     }
     .demo-card .thumb .play-btn {
       width: 48px; height: 48px;
-      background: rgba(108,99,255,0.9);
+      background: rgba(37,99,235,0.9);
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -152,10 +153,10 @@
     .demo-card .tags { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
     .demo-card .tag {
       font-size: 11px; padding: 4px 10px; border-radius: 999px;
-      background: rgba(108,99,255,0.12); color: var(--accent); font-weight: 600;
+      background: rgba(37,99,235,0.08); color: var(--accent); font-weight: 600;
     }
-    .demo-card .tag.accio { background: rgba(0,212,170,0.12); color: var(--accent2); }
-    .demo-card .tag.qoder { background: rgba(245,166,35,0.12); color: var(--gold); }
+    .demo-card .tag.accio { background: rgba(13,148,136,0.08); color: var(--accent2); }
+    .demo-card .tag.qoder { background: rgba(217,119,6,0.08); color: var(--gold); }
 
     /* Platform badges */
     .platform-badge {
@@ -163,8 +164,8 @@
       padding: 4px 10px; border-radius: 6px;
       font-size: 12px; font-weight: 600;
     }
-    .platform-badge.accio { background: rgba(0,212,170,0.1); color: var(--accent2); }
-    .platform-badge.qoder { background: rgba(245,166,35,0.1); color: var(--gold); }
+    .platform-badge.accio { background: rgba(13,148,136,0.08); color: var(--accent2); }
+    .platform-badge.qoder { background: rgba(217,119,6,0.08); color: var(--gold); }
 
     /* Key Results */
     .results {
@@ -179,6 +180,7 @@
       border-radius: 12px;
       padding: 20px;
       text-align: center;
+      box-shadow: 0 2px 8px rgba(37,99,235,0.04);
     }
     .result-card .num { font-size: 36px; font-weight: 800; color: var(--accent2); }
     .result-card .label { font-size: 13px; color: var(--muted); margin-top: 4px; }
@@ -294,11 +296,11 @@
             <h3>意向等级分布</h3>
             <p style="margin-bottom:12px;">salesDegree 由销售人工打标，反映跟进后的意向判断：</p>
             <div style="font-size:13px; line-height:2.2; color:var(--muted);">
-              <span style="display:inline-block;width:36px;text-align:right;color:var(--accent2);font-weight:700;">2</span> · <span style="color:#4ade80;">B+</span> — 高意向，近期可签<br />
-              <span style="display:inline-block;width:36px;text-align:right;color:var(--accent2);font-weight:700;">6</span> · <span style="color:#86efac;">B</span> — 意向明确，需推进<br />
-              <span style="display:inline-block;width:36px;text-align:right;color:var(--accent2);font-weight:700;">22</span> · <span style="color:#fbbf24;">C</span> — 有兴趣，需持续培育<br />
-              <span style="display:inline-block;width:36px;text-align:right;color:var(--accent2);font-weight:700;">8</span> · <span style="color:#f97316;">C-</span> — 低意向<br />
-              <span style="display:inline-block;width:36px;text-align:right;color:var(--accent2);font-weight:700;">2</span> · <span style="color:#ef4444;">D</span> — 暂无意向<br />
+              <span style="display:inline-block;width:36px;text-align:right;color:var(--accent2);font-weight:700;">2</span> · <span style="color:#059669;">B+</span> — 高意向，近期可签<br />
+              <span style="display:inline-block;width:36px;text-align:right;color:var(--accent2);font-weight:700;">6</span> · <span style="color:#0d9488;">B</span> — 意向明确，需推进<br />
+              <span style="display:inline-block;width:36px;text-align:right;color:var(--accent2);font-weight:700;">22</span> · <span style="color:#d97706;">C</span> — 有兴趣，需持续培育<br />
+              <span style="display:inline-block;width:36px;text-align:right;color:var(--accent2);font-weight:700;">8</span> · <span style="color:#ea580c;">C-</span> — 低意向<br />
+              <span style="display:inline-block;width:36px;text-align:right;color:var(--accent2);font-weight:700;">2</span> · <span style="color:#dc2626;">D</span> — 暂无意向<br />
               <span style="display:inline-block;width:36px;text-align:right;color:var(--accent2);font-weight:700;">17</span> · <span style="color:var(--muted);">未评级</span> — 新进私海，待首次跟进
             </div>
             <div class="tags" style="margin-top:14px;">
