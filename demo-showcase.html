@@ -574,17 +574,18 @@
       </p>
       <div class="demo-grid">
         <div class="demo-card">
-          <div class="thumb">
-            <div class="play-btn"></div>
-            视频/截图占位：QoderWork 定时任务列表
+          <div class="thumb" style="aspect-ratio:auto;padding:0;background:#000;">
+            <video controls preload="metadata" style="width:100%;display:block;" poster="">
+              <source src="cron-batch-demo.mp4" type="video/mp4" />
+            </video>
           </div>
           <div class="body">
-            <h3>定时任务配置</h3>
-            <p>展示 QoderWork Cron 面板：每天 10:00 自动扫描 masothue 新注册 + HawaExpo 更新 + vieclam24h 招聘信号。</p>
+            <h3>Live 录屏：批量定时任务执行全流程</h3>
+            <p>实录 Cron 批量触发：① 每小时自动抓爬 leads（公网多源）→ CRM 撞库 → 公海已有则推荐 Pick，净新则 Add 建档；不符合录入条件（如缺邮箱）先存 Excel 暂存。② 执行完毕后自动启动质检，杜绝安全红线违规。</p>
             <div class="tags">
               <span class="tag qoder">QoderWork</span>
-              <span class="tag">Cron</span>
-              <span class="tag">VN Radar</span>
+              <span class="tag">Cron 批量</span>
+              <span class="tag">质检红线</span>
             </div>
           </div>
         </div>
