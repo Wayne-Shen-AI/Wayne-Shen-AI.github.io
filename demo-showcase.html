@@ -221,12 +221,11 @@
     <div class="tabs-inner">
       <a href="#s0">开场</a>
       <a href="#install">第一步·装插件</a>
-      <a href="#s1">第二步·找客</a>
+      <a href="#s1">第二步·找客和建档</a>
       <a href="#s2">第三步·调研</a>
-      <a href="#s3">第四步·建档</a>
-      <a href="#s4">第五步·触达</a>
-      <a href="#s5">第六步·定时雷达</a>
-      <a href="#s6">第七步·团队协作</a>
+      <a href="#s4">第四步·触达</a>
+      <a href="#s5">第五步·定时雷达</a>
+      <a href="#s6">第六步·团队协作</a>
       <a href="#results">效果对比</a>
     </div>
   </nav>
@@ -384,17 +383,17 @@
       </div>
     </section>
 
-    <!-- S1 Leads Finder -->
+    <!-- S1 Leads Finder + CRM -->
     <section id="s1">
       <div class="sec-label">
         <span>第二步</span>
-        <span class="time">找客</span>
+        <span class="time">找客和建档</span>
         <span class="platform-badge accio">AccioWork</span>
       </div>
-      <h2 class="sec-title">智能找客 · Leads Finder（增强包）</h2>
+      <h2 class="sec-title">智能找客 & 自动建档（增强包）</h2>
       <p class="sec-desc">
-        新签的重头戏就是<strong style="color:var(--fg);">找 leads</strong>。官方提供的找客链路已经很完整，但真实作业里每个销售的诉求不一样——地区、品类、验证深度都要微调。
-        这里用的是我们<strong style="color:var(--fg);">专职找 leads 的外包同学</strong>打磨的 <strong style="color:var(--accent);">LeadsFinder 增强包</strong>：把更多环节代码化，跳过反爬验证、加多重校验，<strong style="color:var(--fg);">效率更高、准确率更好、token 更省</strong>。
+        新签的重头戏就是<strong style="color:var(--fg);">找 leads 并建档进私海</strong>——这两步在同一条 AccioWork 对话里一气呵成：Agent 找到目标企业、补全信息后，直接 crm-dedup 撞库、pick/add 落库到我的私海。官方链路已经很完整，但真实作业里每个销售的诉求不一样，
+        所以用我们<strong style="color:var(--fg);">专职找 leads 的外包同学</strong>打磨的 <strong style="color:var(--accent);">LeadsFinder 增强包</strong>：把更多环节代码化，跳过反爬验证、加多重校验，<strong style="color:var(--fg);">效率更高、准确率更好、token 更省</strong>。
       </p>
 
       <!-- Install method callout -->
@@ -409,8 +408,8 @@
           &nbsp;·&nbsp;含 7 个代码化技能，即装即用
         </p>
         <p style="font-size:13px;color:var(--muted);margin-top:8px;">
-          <a href="https://www.accio.com/work/share/U3rxhr6jGbOV" target="_blank" style="color:var(--accent);font-weight:600;">▶ 查看 AccioWork 实战找客对话</a>
-          &nbsp;·&nbsp;真实分享链接，看 Agent 怎么一步步找客
+          <a href="https://www.accio.com/work/share/U3rxhr6jGbOV" target="_blank" style="color:var(--accent);font-weight:600;">▶ 查看 AccioWork 实战「找客 + 建档」对话</a>
+          &nbsp;·&nbsp;真实分享链接，看 Agent 怎么一步步找客并落库私海
         </p>
       </div>
 
@@ -474,6 +473,43 @@
             </div>
           </div>
         </div>
+
+        <!-- Card 4: zero-manual CRM entry -->
+        <div class="demo-card">
+          <div class="body">
+            <h3>建档：零手动录入落库私海</h3>
+            <p>找到并补全后，Agent 在同一条对话里直接 crm-dedup 撞库 → pick/add 落库。自动把 Enrichment 阶段收集的信息映射成 CRM 字段（公司名 / MST / 省 / 类目 / 来源），提交后返回 globalId 进入私海。</p>
+            <div class="tags">
+              <span class="tag accio">CRM Add</span>
+              <span class="tag">crm-dedup 撞库</span>
+              <span class="tag">MST 核验</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 5: placeholder email strategy -->
+        <div class="demo-card">
+          <div class="body">
+            <h3>占位邮箱策略：不卡流程</h3>
+            <p>越南中小企业普遍无企业邮箱。Agent 用安全占位格式 <code style="font-size:12px;">{MST}@pending.noemail</code> 先建档占坑，电话触达后再补真实邮箱，建档不被邮箱卡住。</p>
+            <div class="tags">
+              <span class="tag">先占坑再补全</span>
+              <span class="tag">不卡流程</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 6: private/public sea management -->
+        <div class="demo-card">
+          <div class="body">
+            <h3>私海管理 & 公海捡入</h3>
+            <p>建档后日常用一句话查管：“看下我私海高意向的客户”、“最近放出来的公海有什么”，crm-search / crm-pickup 直接在对话里完成。</p>
+            <div class="tags">
+              <span class="tag accio">crm-search</span>
+              <span class="tag">crm-pickup</span>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -527,69 +563,10 @@
       </div>
     </section>
 
-    <!-- S3 CRM -->
-    <section id="s3">
-      <div class="sec-label">
-        <span>第四步</span>
-        <span class="time">建档</span>
-        <span class="platform-badge accio">AccioWork</span>
-      </div>
-      <h2 class="sec-title">自动建档 · CRM Tools</h2>
-      <p class="sec-desc">
-        <strong>Skill：</strong>ggs-sales-crm-tools<br />
-        <strong>演示指令：</strong>"把 DAVIEGO 建档到我的私海" <br />
-        Agent 自动：填充 crm-add 必填字段(公司名/MST/省/类目/来源) → 提交建档 → 返回 globalId → 进入私海
-      </p>
-      <div class="demo-grid">
-        <div class="demo-card">
-          <div class="thumb">
-            <div class="play-btn"></div>
-            视频占位：一句话建档 CRM 全过程
-          </div>
-          <div class="body">
-            <h3>Live Demo：零手动录入建档</h3>
-            <p>Agent 自动将 Enrichment 阶段收集的信息映射为 CRM 字段，包含 MST 验证、省份代码映射、占位邮箱策略。</p>
-            <div class="tags">
-              <span class="tag accio">AccioWork</span>
-              <span class="tag">CRM Add</span>
-              <span class="tag">MST 核验</span>
-            </div>
-          </div>
-        </div>
-        <div class="demo-card">
-          <div class="thumb">
-            截图占位：CRM 建档成功返回 globalId
-          </div>
-          <div class="body">
-            <h3>占位邮箱策略</h3>
-            <p>越南中小企业普遍无企业邮箱。Agent 用安全占位格式 {MST}@pending.noemail 先建档占坑，电话触达后再补真实邮箱，不卡流程。</p>
-            <div class="tags">
-              <span class="tag">不卡流程</span>
-              <span class="tag">先占坑再补全</span>
-            </div>
-          </div>
-        </div>
-        <div class="demo-card">
-          <div class="thumb">
-            截图占位：私海列表查看
-          </div>
-          <div class="body">
-            <h3>私海管理 & 公海捡入</h3>
-            <p>演示"看下我私海高意向的客户"、"最近放出来的公海有什么"等日常 CRM 查询操作。</p>
-            <div class="tags">
-              <span class="tag accio">AccioWork</span>
-              <span class="tag">crm-search</span>
-              <span class="tag">crm-pickup</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- S4 Outreach -->
     <section id="s4">
       <div class="sec-label">
-        <span>第五步</span>
+        <span>第四步</span>
         <span class="time">触达</span>
         <span class="platform-badge accio">AccioWork</span>
       </div>
@@ -634,7 +611,7 @@
     <!-- S5 Cron / Radar -->
     <section id="s5">
       <div class="sec-label">
-        <span>第六步</span>
+        <span>第五步</span>
         <span class="time">定时雷达</span>
         <span class="platform-badge qoder">QoderWork</span>
       </div>
@@ -693,7 +670,7 @@
     <!-- S6 Team Collab -->
     <section id="s6">
       <div class="sec-label">
-        <span>第七步</span>
+        <span>第六步</span>
         <span class="time">团队协作</span>
         <span class="platform-badge accio">AccioWork</span>
         <span class="platform-badge qoder">QoderWork</span>
