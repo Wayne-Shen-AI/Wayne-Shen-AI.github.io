@@ -391,52 +391,82 @@
         <span class="time">找客</span>
         <span class="platform-badge accio">AccioWork</span>
       </div>
-      <h2 class="sec-title">智能找客 · Leads Finder</h2>
+      <h2 class="sec-title">智能找客 · Leads Finder（增强包）</h2>
       <p class="sec-desc">
-        <strong>Skill：</strong>ggs-sales-leads-finder<br />
-        <strong>演示指令：</strong>"帮我找 5 家胡志明市做家具出口的工厂，要有外贸经验的" <br />
-        Agent 自动：多渠道搜索(vietgo/masothue/google) → MST 去重(crm-dedup) → 输出候选列表
+        新签的重头戏就是<strong style="color:var(--fg);">找 leads</strong>。官方提供的找客链路已经很完整，但真实作业里每个销售的诉求不一样——地区、品类、验证深度都要微调。
+        这里用的是我们<strong style="color:var(--fg);">专职找 leads 的外包同学</strong>打磨的 <strong style="color:var(--accent);">LeadsFinder 增强包</strong>：把更多环节代码化，跳过反爬验证、加多重校验，<strong style="color:var(--fg);">效率更高、准确率更好、token 更省</strong>。
       </p>
+
+      <!-- Install method callout -->
+      <div style="margin-bottom:24px;padding:18px 20px;background:rgba(37,99,235,0.04);border-radius:12px;border:1px solid var(--border);">
+        <p style="font-size:14px;font-weight:700;color:var(--fg);margin-bottom:8px;">安装方式（同插件市场一样简单）</p>
+        <p style="font-size:14px;color:var(--muted);line-height:1.9;">
+          把增强包的<strong style="color:var(--fg);">文件夹路径</strong>或<strong style="color:var(--fg);">压缩包</strong>直接丢进 SalesBuddy，一句提示词即可：<br />
+          <code style="display:inline-block;margin-top:6px;padding:6px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--accent);font-size:13px;">安装这里面的新版技能，如果有重复的，更新覆盖</code>
+        </p>
+        <p style="font-size:13px;color:var(--muted);margin-top:12px;">
+          <a href="leadsfinder-pro-pack.zip" download style="color:var(--accent);font-weight:600;">⬇ 下载 LeadsFinder 增强包 (zip)</a>
+          &nbsp;·&nbsp;含 7 个代码化技能，即装即用
+        </p>
+      </div>
+
       <div class="demo-grid">
+        <!-- Card 1: the 7 skills -->
         <div class="demo-card">
-          <div class="thumb">
-            <div class="play-btn"></div>
-            视频占位：现场录屏 — Accio 对话框输入找客指令
-          </div>
           <div class="body">
-            <h3>Live Demo：一句话启动多渠道找客</h3>
-            <p>展示 Agent 如何调用 google-search、解析 masothue 工商信息、crm-dedup 去重、输出 not_repeat 净新客列表。</p>
-            <div class="tags">
-              <span class="tag accio">AccioWork</span>
-              <span class="tag">Leads Finder</span>
-              <span class="tag">CRM Dedup</span>
+            <h3>增强包内含 7 个核心技能</h3>
+            <p style="margin-bottom:12px;">全量覆盖旧版技能，最新业务逻辑 + 国家级搜索策略（越南 / 香港 / 巴基斯坦）+ 字段 Schema 生效：</p>
+            <div style="font-size:13px;line-height:2.1;color:var(--muted);">
+              <strong style="color:var(--fg);">leads-finder</strong> — 线索发现<br />
+              <strong style="color:var(--fg);">websearch-enrichment</strong> — 通用搜索补全<br />
+              <strong style="color:var(--fg);">website-enrichment</strong> — 官网优先补全<br />
+              <strong style="color:var(--fg);">hk-company-enrichment</strong> — 香港公司特化背调<br />
+              <strong style="color:var(--fg);">fb-group-lead-enrichment</strong> — FB 群组线索增强<br />
+              <strong style="color:var(--fg);">Scrapling-Skill</strong> — 高级网页抓取（跳反爬）<br />
+              <strong style="color:var(--fg);">industry-mapping</strong> — 行业映射逻辑
+            </div>
+            <div class="tags" style="margin-top:14px;">
+              <span class="tag accio">代码化</span>
+              <span class="tag">跳反爬</span>
+              <span class="tag">多重校验</span>
+              <span class="tag">省 token</span>
             </div>
           </div>
         </div>
+
+        <!-- Card 2: install feedback screenshot -->
         <div class="demo-card">
-          <div class="thumb">
-            截图占位：去重结果对比表<br />(not_repeat / public / depot)
+          <div class="thumb" style="aspect-ratio:auto;padding:0;background:var(--surface);">
+            <a href="leadsfinder-install-feedback.png" target="_blank" style="display:block;width:100%;">
+              <img src="leadsfinder-install-feedback.png" alt="SalesBuddy 安装增强包反馈" style="width:100%;display:block;" loading="lazy" />
+            </a>
           </div>
           <div class="body">
-            <h3>去重逻辑可视化</h3>
-            <p>展示 MST 精确匹配 + 公司名模糊匹配 + 电话匹配的三层去重策略，说明 not_repeat = 真正净新客。</p>
+            <h3>安装反馈：一键覆盖更新</h3>
+            <p>实际反馈截图——SalesBuddy 从增强包目录 <code style="font-size:12px;">skill-from-zhangyu</code> 全量 cp -R 覆盖更新 7 个技能，并同步写入今日日记与 MEMORY.md，装完即可直接调用。</p>
             <div class="tags">
-              <span class="tag">MST 精确匹配</span>
-              <span class="tag">Levenshtein ≥ 0.8</span>
+              <span class="tag accio">SalesBuddy</span>
+              <span class="tag">全量覆盖</span>
+              <span class="tag">即装即用</span>
             </div>
           </div>
         </div>
+
+        <!-- Card 3: why the pack (efficiency) -->
         <div class="demo-card">
-          <div class="thumb">
-            截图占位：多渠道来源示意图
-          </div>
           <div class="body">
-            <h3>5 类外网渠道覆盖</h3>
-            <p>黄页/B2B名录、海关提单、行业协会(HAWA/VASEP)、社媒(FB/LinkedIn)、展会线上名录。Agent 按命中率自动择优。</p>
-            <div class="tags">
-              <span class="tag">vietgo</span>
-              <span class="tag">masothue</span>
-              <span class="tag">HawaExpo</span>
+            <h3>为什么要用增强包？</h3>
+            <p style="margin-bottom:12px;">官方链路 = 完整基线；增强包 = 前线实战微调。核心差异：</p>
+            <div style="font-size:13px;line-height:1.9;color:var(--muted);">
+              <strong style="color:var(--accent);">跳过反爬验证：</strong>Scrapling 代码化抓取，masothue / 黄页 / 名录不再卡验证码。<br />
+              <strong style="color:var(--accent);">多重校验：</strong>MST + 公司名 + 官网 + 邮箱域交叉核对，降低幻觉写错 CRM。<br />
+              <strong style="color:var(--accent);">省 token：</strong>把重复判断固化成代码，少走大模型来回，单条线索成本更低。<br />
+              <strong style="color:var(--accent);">一地一策：</strong>越南 / 香港 / 巴基斯坦各自的搜索策略与字段 Schema。
+            </div>
+            <div class="tags" style="margin-top:14px;">
+              <span class="tag">效率 ↑</span>
+              <span class="tag">准确率 ↑</span>
+              <span class="tag">成本 ↓</span>
             </div>
           </div>
         </div>
