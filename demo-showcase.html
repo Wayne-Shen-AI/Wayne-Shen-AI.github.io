@@ -193,11 +193,41 @@
       font-size: 13px;
     }
 
+    /* Bar charts */
+    .bar-row { display:flex; align-items:center; gap:10px; margin:8px 0; font-size:13px; }
+    .bar-label { width:150px; flex-shrink:0; color:var(--muted); text-align:right; line-height:1.25; }
+    .bar-track { flex:1; background:#eef2f8; border-radius:6px; height:18px; overflow:hidden; }
+    .bar-fill { height:100%; border-radius:6px; background:linear-gradient(90deg,#2563eb,#0d9488); }
+    .bar-val { width:26px; flex-shrink:0; font-weight:700; color:var(--fg); text-align:left; }
+    .bar-fill.lv1 { background:#059669; } .bar-fill.lv2 { background:#0d9488; }
+    .bar-fill.lv3 { background:#d97706; } .bar-fill.lv4 { background:#ea580c; }
+    .bar-fill.lv5 { background:#dc2626; } .bar-fill.lv0 { background:#94a3b8; }
+
+    /* Process flow */
+    .flow { display:flex; align-items:stretch; flex-wrap:wrap; gap:10px; margin-top:8px; }
+    .flow-step { flex:1; min-width:140px; background:var(--surface); border:1px solid var(--border);
+      border-radius:12px; padding:14px 16px; display:flex; flex-direction:column; justify-content:center; }
+    .flow-step .fi { font-size:20px; margin-bottom:6px; }
+    .flow-step .ft { font-size:14px; font-weight:700; color:var(--fg); }
+    .flow-step .fd { font-size:12px; color:var(--muted); margin-top:4px; line-height:1.5; }
+    .flow-arrow { display:flex; align-items:center; justify-content:center; color:var(--accent); font-size:20px; font-weight:700; flex-shrink:0; }
+    .flow-branch { flex:1.3; min-width:180px; display:flex; flex-direction:column; gap:8px; }
+    .flow-branch .flow-step { padding:11px 14px; }
+    .flow-step.pick { border-color:var(--accent2); background:rgba(13,148,136,0.05); }
+    .flow-step.add { border-color:var(--accent); background:rgba(37,99,235,0.05); }
+    .flow-step.final { background:linear-gradient(135deg,#edf2ff,#e6fffb); border-color:var(--accent); }
+    .ins-row { display:flex; gap:12px; flex-wrap:wrap; margin-top:16px; }
+    .ins { flex:1; min-width:220px; background:rgba(37,99,235,0.04); border:1px solid var(--border);
+      border-radius:10px; padding:12px 14px; font-size:13px; color:var(--muted); line-height:1.6; }
+    .ins b { color:var(--accent); display:block; margin-bottom:3px; }
+
     /* Responsive */
     @media (max-width: 768px) {
       .hero h1 { font-size: 32px; }
       .demo-grid { grid-template-columns: 1fr; }
       .results { grid-template-columns: 1fr 1fr; }
+      .bar-label { width: 96px; }
+      .flow-arrow { display:none; }
     }
   </style>
 </head>
@@ -269,84 +299,89 @@
         </div>
       </div>
 
-      <div class="demo-grid">
-        <!-- Card 1: Source breakdown -->
+      <div class="demo-grid" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr));align-items:start;">
+        <!-- Card 1: Source breakdown as bars -->
         <div class="demo-card">
           <div class="body">
             <h3>Leads 来源分布（多源叠加）</h3>
-            <p style="margin-bottom:12px;">每条 lead 可能同时被多个数据源标记，以下是叠加计数：</p>
-            <div style="font-size:13px; line-height:2; color:var(--muted);">
-              <span style="color:var(--accent2);font-weight:700;">45</span> · Accio Work 自拓（Agent 发现 + 建档）<br />
-              <span style="color:var(--accent2);font-weight:700;">47</span> · 邓白氏 (D&B) 注册企业数据<br />
-              <span style="color:var(--accent2);font-weight:700;">17</span> · Panjiva 验证出口商<br />
-              <span style="color:var(--accent2);font-weight:700;">14</span> · masothue.com 工商爬取<br />
-              <span style="color:var(--accent2);font-weight:700;">9</span> · Leads Booster 自动补全<br />
-              <span style="color:var(--accent2);font-weight:700;">7</span> · 中台 Level 4 分发<br />
-              <span style="color:var(--accent2);font-weight:700;">6</span> · Panjiva 采购数据<br />
-              <span style="color:var(--accent2);font-weight:700;">6</span> · Leads Booster 网站提取<br />
-              <span style="color:var(--accent2);font-weight:700;">1</span> · Facebook 群组 AI Enrich<br />
-              <span style="color:var(--accent2);font-weight:700;">1</span> · vnbis / tradekey / kompass 等
-            </div>
-            <div class="tags" style="margin-top:14px;">
-              <span class="tag accio">Accio Work</span>
-              <span class="tag">D&B</span>
-              <span class="tag">Panjiva</span>
-              <span class="tag">masothue</span>
-            </div>
+            <p style="margin-bottom:14px;">每条 lead 可能被多个数据源标记，以下为叠加计数：</p>
+            <div class="bar-row"><span class="bar-label">邓白氏 (D&B) 注册数据</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">47</span></div>
+            <div class="bar-row"><span class="bar-label">Accio Work 自拓</span><div class="bar-track"><div class="bar-fill" style="width:96%"></div></div><span class="bar-val">45</span></div>
+            <div class="bar-row"><span class="bar-label">Panjiva 验证出口商</span><div class="bar-track"><div class="bar-fill" style="width:36%"></div></div><span class="bar-val">17</span></div>
+            <div class="bar-row"><span class="bar-label">masothue 工商爬取</span><div class="bar-track"><div class="bar-fill" style="width:30%"></div></div><span class="bar-val">14</span></div>
+            <div class="bar-row"><span class="bar-label">Leads Booster 补全</span><div class="bar-track"><div class="bar-fill" style="width:19%"></div></div><span class="bar-val">9</span></div>
+            <div class="bar-row"><span class="bar-label">中台 Level 4 分发</span><div class="bar-track"><div class="bar-fill" style="width:15%"></div></div><span class="bar-val">7</span></div>
+            <div class="bar-row"><span class="bar-label">Panjiva 采购数据</span><div class="bar-track"><div class="bar-fill" style="width:13%"></div></div><span class="bar-val">6</span></div>
+            <div class="bar-row"><span class="bar-label">Booster 网站提取</span><div class="bar-track"><div class="bar-fill" style="width:13%"></div></div><span class="bar-val">6</span></div>
+            <div class="bar-row"><span class="bar-label">FB 群组 AI Enrich</span><div class="bar-track"><div class="bar-fill" style="width:4%"></div></div><span class="bar-val">1</span></div>
+            <div class="bar-row"><span class="bar-label">vnbis / tradekey 等</span><div class="bar-track"><div class="bar-fill" style="width:4%"></div></div><span class="bar-val">1</span></div>
           </div>
         </div>
 
-        <!-- Card 2: Intent distribution -->
+        <!-- Card 2: Intent distribution as bars -->
         <div class="demo-card">
           <div class="body">
             <h3>意向等级分布</h3>
-            <p style="margin-bottom:12px;">salesDegree 由销售人工打标，反映跟进后的意向判断：</p>
-            <div style="font-size:13px; line-height:2.2; color:var(--muted);">
-              <span style="display:inline-block;width:36px;text-align:right;color:var(--accent2);font-weight:700;">2</span> · <span style="color:#059669;">B+</span> — 高意向，近期可签<br />
-              <span style="display:inline-block;width:36px;text-align:right;color:var(--accent2);font-weight:700;">6</span> · <span style="color:#0d9488;">B</span> — 意向明确，需推进<br />
-              <span style="display:inline-block;width:36px;text-align:right;color:var(--accent2);font-weight:700;">22</span> · <span style="color:#d97706;">C</span> — 有兴趣，需持续培育<br />
-              <span style="display:inline-block;width:36px;text-align:right;color:var(--accent2);font-weight:700;">8</span> · <span style="color:#ea580c;">C-</span> — 低意向<br />
-              <span style="display:inline-block;width:36px;text-align:right;color:var(--accent2);font-weight:700;">2</span> · <span style="color:#dc2626;">D</span> — 暂无意向<br />
-              <span style="display:inline-block;width:36px;text-align:right;color:var(--accent2);font-weight:700;">17</span> · <span style="color:var(--muted);">未评级</span> — 新进私海，待首次跟进
-            </div>
-            <div class="tags" style="margin-top:14px;">
+            <p style="margin-bottom:14px;">salesDegree 由销售人工打标，反映跟进后的意向判断：</p>
+            <div class="bar-row"><span class="bar-label">C · 有兴趣待培育</span><div class="bar-track"><div class="bar-fill lv3" style="width:100%"></div></div><span class="bar-val">22</span></div>
+            <div class="bar-row"><span class="bar-label">未评级 · 待首跟</span><div class="bar-track"><div class="bar-fill lv0" style="width:77%"></div></div><span class="bar-val">17</span></div>
+            <div class="bar-row"><span class="bar-label">C- · 低意向</span><div class="bar-track"><div class="bar-fill lv4" style="width:36%"></div></div><span class="bar-val">8</span></div>
+            <div class="bar-row"><span class="bar-label">B · 意向明确</span><div class="bar-track"><div class="bar-fill lv2" style="width:27%"></div></div><span class="bar-val">6</span></div>
+            <div class="bar-row"><span class="bar-label">B+ · 近期可签</span><div class="bar-track"><div class="bar-fill lv1" style="width:9%"></div></div><span class="bar-val">2</span></div>
+            <div class="bar-row"><span class="bar-label">D · 暂无意向</span><div class="bar-track"><div class="bar-fill lv5" style="width:9%"></div></div><span class="bar-val">2</span></div>
+            <div class="tags" style="margin-top:16px;">
               <span class="tag">B+ 及以上 = 8 条</span>
-              <span class="tag">待跟进 = 17 条</span>
+              <span class="tag">待首次跟进 = 17 条</span>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Card 3: How I got them (MECE: pick vs add) -->
-        <div class="demo-card">
-          <div class="body">
-            <h3>57 条 Leads 怎么进入我的私海？</h3>
-            <p style="margin-bottom:12px;">统一流程：<strong style="color:var(--fg);">Agent 公网找客 → Enrichment → CRM 撞库 → 分流入海</strong></p>
-            <p style="font-size:14px;color:var(--muted);line-height:1.9;">
-              所有 57 条线索起点相同——AI Agent 在公网（masothue / Panjiva / Google / 行业协会 / FB 群组等）主动发现目标企业，完成背调补全后，用 <strong style="color:var(--fg);">crm-dedup 撞库</strong> 判断公海是否已有该公司：
-            </p>
-            <div style="margin-top:14px;display:flex;gap:12px;flex-wrap:wrap;">
-              <div style="flex:1;min-width:200px;padding:14px 16px;background:rgba(13,148,136,0.04);border-radius:10px;border:1px solid var(--border);">
-                <p style="font-size:14px;font-weight:700;color:var(--fg);margin-bottom:6px;">撞到 → Pick (54 条)</p>
-                <p style="font-size:13px;color:var(--muted);line-height:1.7;">公海里已有记录（中台此前导入的 D&B / Panjiva 数据），Agent 用 crm-pickup 一键捡入我的私海。</p>
+      <!-- Full-width flow: how 57 leads entered the private sea -->
+      <div class="demo-card" style="margin-top:20px;">
+        <div class="body">
+          <h3>57 条 Leads 怎么进入我的私海？</h3>
+          <p style="margin-bottom:4px;">统一链路——起点都是 Agent 公网主动找客，最终由撞库结果决定 Pick 还是 Add：</p>
+          <div class="flow">
+            <div class="flow-step">
+              <div class="fi">🌐</div>
+              <div class="ft">公网找客</div>
+              <div class="fd">masothue · Panjiva · Google · 行业协会 · FB 群组</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="fi">🔎</div>
+              <div class="ft">Enrichment 背调</div>
+              <div class="fd">补全联系方式 / KP / 出口资质</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="fi">🎯</div>
+              <div class="ft">crm-dedup 撞库</div>
+              <div class="fd">判断公海是否已有该公司</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-branch">
+              <div class="flow-step pick">
+                <div class="ft">撞到 → Pick · 54</div>
+                <div class="fd">公海已有（中台灌入的 D&B/Panjiva），crm-pickup 一键捡入</div>
               </div>
-              <div style="flex:1;min-width:200px;padding:14px 16px;background:rgba(37,99,235,0.04);border-radius:10px;border:1px solid var(--border);">
-                <p style="font-size:14px;font-weight:700;color:var(--fg);margin-bottom:6px;">没撞到 → Add (3 条)</p>
-                <p style="font-size:13px;color:var(--muted);line-height:1.7;">公海里完全不存在的净新企业，Agent 通过 crm-add 直接新建进我的私海。</p>
+              <div class="flow-step add">
+                <div class="ft">没撞到 → Add · 3</div>
+                <div class="fd">净新企业，crm-add 直接新建</div>
               </div>
             </div>
-            <div style="margin-top:16px;padding:12px 16px;background:rgba(37,99,235,0.04);border-radius:10px;border:1px solid var(--border);">
-              <p style="font-size:13px;color:var(--fg);font-weight:600;margin-bottom:6px;">关键认知</p>
-              <p style="font-size:13px;color:var(--muted);line-height:1.8;">
-                <strong style="color:var(--accent);">起点统一：</strong>57 条全部由 Agent 从公网主动搜索发现（Leads Finder skill），不是被动等公海分发。<br />
-                <strong style="color:var(--accent);">撞库决定路径：</strong>pick vs add 的区别仅取决于 crm-dedup 的结果——绝大多数企业已被中台批量灌入公海，所以 pick 占 95%。<br />
-                <strong style="color:var(--accent);">Enrichment 前置：</strong>不管最终 pick 还是 add，Agent 都已提前完成信息补全（联系方式 / KP / 出口资质），入海即可跟进。
-              </p>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step final">
+              <div class="fi">📥</div>
+              <div class="ft">我的私海 · 57</div>
+              <div class="fd">入海即可跟进</div>
             </div>
-            <div class="tags" style="margin-top:14px;">
-              <span class="tag accio">公网找客 57</span>
-              <span class="tag">撞库 → Pick 54</span>
-              <span class="tag">净新 → Add 3</span>
-            </div>
+          </div>
+          <div class="ins-row">
+            <div class="ins"><b>起点统一</b>57 条全部 Agent 公网主动发现（Leads Finder），非被动等分发。</div>
+            <div class="ins"><b>撞库决定路径</b>Pick vs Add 只看 crm-dedup 结果，公海已被批量灌入，故 Pick 占 95%。</div>
+            <div class="ins"><b>Enrichment 前置</b>无论 Pick/Add，入海前信息已补全，落库即可跟进。</div>
           </div>
         </div>
       </div>
