@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>越南直销 Accio Work 使用情况深度分析</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f5f6fa;color:#1f2937;line-height:1.6}
+  .header{background:linear-gradient(135deg,#ff6a00 0%,#ee0979 100%);color:#fff;padding:32px 40px}
+  .header h1{font-size:28px;font-weight:600;margin-bottom:6px}
+  .header .sub{font-size:14px;opacity:.9}
+  .header .meta{margin-top:12px;font-size:13px;opacity:.85}
+  .container{max-width:1400px;margin:0 auto;padding:24px 32px}
+  .nav{position:sticky;top:0;background:#fff;padding:12px 32px;border-bottom:1px solid #e5e7eb;z-index:100;overflow-x:auto;white-space:nowrap}
+  .nav a{color:#4b5563;text-decoration:none;padding:6px 14px;margin-right:4px;border-radius:6px;font-size:13px;font-weight:500;display:inline-block}
+  .nav a:hover{background:#f3f4f6;color:#ff6a00}
+  .nav a.active{background:#fff4ec;color:#ff6a00}
+  .section{background:#fff;border-radius:12px;padding:28px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .section h2{font-size:20px;font-weight:600;margin-bottom:4px;color:#111827;border-left:4px solid #ff6a00;padding-left:12px}
+  .section .desc{color:#6b7280;font-size:13px;margin-bottom:20px;padding-left:16px}
+  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:8px}
+  .kpi{background:linear-gradient(135deg,#fff9f2 0%,#fef3ec 100%);border:1px solid #ffe4d1;border-radius:10px;padding:16px 18px}
+  .kpi .label{font-size:12px;color:#6b7280;margin-bottom:6px}
+  .kpi .value{font-size:24px;font-weight:700;color:#ea580c}
+  .kpi .foot{font-size:11px;color:#9ca3af;margin-top:4px}
+  .kpi.warn{background:linear-gradient(135deg,#fef2f2 0%,#fee2e2 100%);border-color:#fecaca}
+  .kpi.warn .value{color:#dc2626}
+  .kpi.good{background:linear-gradient(135deg,#f0fdf4 0%,#dcfce7 100%);border-color:#bbf7d0}
+  .kpi.good .value{color:#16a34a}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  @media(max-width:900px){.grid-2,.grid-3{grid-template-columns:1fr}}
+  .chart{height:340px;width:100%}
+  .chart-lg{height:420px;width:100%}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{background:#f9fafb;color:#374151;font-weight:600;text-align:left;padding:10px 12px;border-bottom:2px solid #e5e7eb;position:sticky;top:0}
+  td{padding:9px 12px;border-bottom:1px solid #f3f4f6;color:#4b5563}
+  tr:hover td{background:#fef9f5}
+  .tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+  .tag-深度{background:#fecaca;color:#991b1b}
+  .tag-重度{background:#fed7aa;color:#9a3412}
+  .tag-中度{background:#fde68a;color:#854d0e}
+  .tag-轻度{background:#bbf7d0;color:#166534}
+  .tag-尝鲜{background:#dbeafe;color:#1e40af}
+  .prompt-card{background:#f9fafb;border-left:3px solid #ff6a00;padding:12px 16px;margin-bottom:10px;border-radius:6px;font-size:12.5px}
+  .prompt-card.fail{border-left-color:#dc2626;background:#fef2f2}
+  .prompt-card .who{color:#ea580c;font-weight:600;font-size:11px;margin-bottom:6px}
+  .prompt-card.fail .who{color:#dc2626}
+  .prompt-card .cat{background:#fff;padding:1px 6px;border-radius:4px;font-size:10px;color:#6b7280;margin-left:6px;border:1px solid #e5e7eb}
+  .prompt-card .vn{color:#1f2937;margin-bottom:4px}
+  .prompt-card .zh{color:#6b7280;font-size:11.5px;padding-top:4px;border-top:1px dashed #e5e7eb}
+  .insight-box{background:#fff4ec;border:1px solid #ffe4d1;border-radius:8px;padding:16px 20px;margin:16px 0}
+  .insight-box.warn{background:#fef2f2;border-color:#fecaca}
+  .insight-box.good{background:#f0fdf4;border-color:#bbf7d0}
+  .insight-box h4{color:#c2410c;font-size:14px;margin-bottom:8px}
+  .insight-box.warn h4{color:#991b1b}
+  .insight-box.good h4{color:#166534}
+  .insight-box p{font-size:13px;color:#4b5563;margin-bottom:6px}
+  .rec-list{list-style:none}
+  .rec-item{padding:14px 18px;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:10px;background:#fff}
+  .rec-item .rec-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .rec-item .rec-num{width:28px;height:28px;border-radius:50%;background:#ff6a00;color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
+  .rec-item .rec-title{font-weight:600;font-size:15px;color:#111827}
+  .rec-item .rec-pri{margin-left:auto;font-size:11px;padding:2px 8px;border-radius:10px}
+  .pri-P0{background:#fecaca;color:#991b1b}
+  .pri-P1{background:#fed7aa;color:#9a3412}
+  .pri-P2{background:#fde68a;color:#854d0e}
+  .rec-item .rec-body{font-size:13px;color:#4b5563;padding-left:36px}
+  .rec-item .rec-meta{font-size:11px;color:#6b7280;padding-left:36px;margin-top:6px}
+  .rec-item .rec-meta span{margin-right:14px}
+  .filter-bar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+  .filter-bar input,.filter-bar select{padding:6px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px}
+  .footer{text-align:center;padding:20px;color:#9ca3af;font-size:12px}
+  .divider{border:none;border-top:1px dashed #e5e7eb;margin:20px 0}
+  .side-note{background:#eff6ff;border-left:3px solid #3b82f6;padding:10px 14px;font-size:12.5px;color:#1e40af;margin-top:10px;border-radius:4px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>越南直销团队 Accio Work 使用情况深度分析</h1>
+  <div class="sub">Vietnam Direct Sales · Accio Work Usage Deep-Dive Analysis</div>
+  <div class="meta">数据窗口：2026-06-11 ~ 2026-07-13（33天） · 覆盖 55 位越南销售 · 2,395 次查询</div>
+</div>
+
+<div class="nav">
+  <a href="#overview">① 全景概览</a>
+  <a href="#concentration">② 集中度与分层</a>
+  <a href="#category">③ 场景类别分析</a>
+  <a href="#region">④ 跨市场对标</a>
+  <a href="#trend">⑤ 时间趋势</a>
+  <a href="#tier-compare">⑥ 深度 vs 尝鲜</a>
+  <a href="#kol">⑦ Top KOL Prompts</a>
+  <a href="#fail">⑧ 流失/误用样本</a>
+  <a href="#user-table">⑨ 用户明细表</a>
+  <a href="#recommend">⑩ 改进建议</a>
+</div>
+
+<div class="container">
+
+<!-- ①全景 -->
+<div class="section" id="overview">
+  <h2>① 全景概览</h2>
+  <div class="desc">33天时间窗内越南55位直销的 Accio Work 使用总画像</div>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="label">总查询次数</div><div class="value">2,395</div><div class="foot">日均 72.6 次</div></div>
+    <div class="kpi"><div class="label">活跃账号数</div><div class="value">55</div><div class="foot">覆盖率 55/100 = 55%</div></div>
+    <div class="kpi"><div class="label">活跃天数</div><div class="value">32</div><div class="foot">工作日集中(周六周日仅113次)</div></div>
+    <div class="kpi warn"><div class="label">Top 10 用户占比</div><div class="value">54.6%</div><div class="foot">典型二八分布</div></div>
+    <div class="kpi warn"><div class="label">Gini 集中度</div><div class="value">0.58</div><div class="foot">>0.5 属高度集中</div></div>
+    <div class="kpi warn"><div class="label">尝鲜后流失(≤5次)</div><div class="value">13人</div><div class="foot">占23.6% - onboarding断层</div></div>
+    <div class="kpi good"><div class="label">高价值场景覆盖</div><div class="value">38人</div><div class="foot">报告+邮件+招商 用过≥1次</div></div>
+    <div class="kpi warn"><div class="label">高价值查询占比</div><div class="value">7.6%</div><div class="foot">仅181次 - 产出型使用不足</div></div>
+  </div>
+  <div class="insight-box">
+    <h4>核心结论</h4>
+    <p><strong>不是"用得少"，是"用得偏、用得散、用得浅"。</strong> 8个深度玩家（>100次）扛着大盘 54.6%，其余 47 人要么刚上手、要么已流失；招商策略33天仅4次使用，报告/方案56次，最能沉淀交付物的场景严重低频。</p>
+  </div>
+</div>
+
+<!-- ②集中度 -->
+<div class="section" id="concentration">
+  <h2>② 用户集中度与分层</h2>
+  <div class="desc">哑铃型分布——头部深度用户与尾部尝鲜用户共存，缺乏中间稳定层</div>
+
+  <div class="grid-2">
+    <div>
+      <h3 style="font-size:14px;font-weight:600;margin-bottom:8px;color:#374151">帕累托曲线（55人按查询数排序）</h3>
+      <div id="pareto" class="chart-lg"></div>
+    </div>
+    <div>
+      <h3 style="font-size:14px;font-weight:600;margin-bottom:8px;color:#374151">五层用户分布（人数×查询占比）</h3>
+      <div id="tierDist" class="chart-lg"></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <h3 style="font-size:14px;font-weight:600;margin-bottom:10px">分层解读</h3>
+  <table>
+    <thead>
+      <tr><th>分层</th><th>频次范围</th><th>人数</th><th>查询占比</th><th>特征画像</th><th>建议动作</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="tag tag-深度">深度</span></td><td>&gt;100次</td><td>8</td><td>47.7%</td><td>KOL/试点，多轮追问，能用Skill/文件</td><td>提炼Prompt模板，做团队分享</td></tr>
+      <tr><td><span class="tag tag-重度">重度</span></td><td>51-100次</td><td>10</td><td>30.8%</td><td>稳定使用，场景1-2个为主</td><td>横向拓展场景（招商/报告）</td></tr>
+      <tr><td><span class="tag tag-中度">中度</span></td><td>21-50次</td><td>13</td><td>15.2%</td><td>用得起来，但深度不够</td><td>1v1指导，从单场景升级到组合</td></tr>
+      <tr><td><span class="tag tag-轻度">轻度</span></td><td>6-20次</td><td>11</td><td>4.9%</td><td>断续使用，容易忘</td><td>钉钉群定期case推送激活</td></tr>
+      <tr><td><span class="tag tag-尝鲜">尝鲜</span></td><td>≤5次</td><td>13</td><td>1.4%</td><td>用了就走，很多卡在第一步</td><td><b style="color:#dc2626">P0紧急救援</b>：1v1手把手onboarding</td></tr>
+    </tbody>
+  </table>
+
+  <div class="insight-box warn">
+    <h4>⚠ 断层预警</h4>
+    <p><b>13位尝鲜用户中10位只查了1-2次</b>——采样发现他们卡在"文件传不上""看不到结果""转成英文"这类第一步问题，说明现有产品引导对越南销售不够友好。</p>
+  </div>
+</div>
+
+<!-- ③类别 -->
+<div class="section" id="category">
+  <h2>③ 场景类别分析</h2>
+  <div class="desc">场景使用分布 + 高价值场景漏斗</div>
+
+  <div class="grid-2">
+    <div>
+      <h3 style="font-size:14px;font-weight:600;margin-bottom:8px;color:#374151">类别使用分布（次数）</h3>
+      <div id="catBar" class="chart"></div>
+    </div>
+    <div>
+      <h3 style="font-size:14px;font-weight:600;margin-bottom:8px;color:#374151">高价值场景漏斗</h3>
+      <div id="funnel" class="chart"></div>
+    </div>
+  </div>
+
+  <div class="insight-box">
+    <h4>场景观察</h4>
+    <p>1. <b>"其他咨询"占36%</b>—— 采样后发现该类混入大量多轮follow-up和翻译请求（如"翻译成越南语""继续找""cám ơn bạn"），需要重新聚类，真实"闲聊/误用"占比可能比想象低。</p>
+    <p>2. <b>"招商策略"33天仅4次使用</b>—— 这恰恰是越南 GGS 最需要的场景（`vn-industry-recruitment` skill 的核心能力），产品能力未打透。</p>
+    <p>3. <b>"报告/方案"仅56次覆盖17人</b>—— 但看Top用户 tranthith02437180 一个人贡献16次（做客户店铺诊断），说明这个能力好用，只是没扩散。</p>
+  </div>
+</div>
+
+<!-- ④跨市场 -->
+<div class="section" id="region">
+  <h2>④ 跨市场对标</h2>
+  <div class="desc">5个市场（越南/台湾/韩国/香港/其他）横向对比</div>
+
+  <div class="grid-2">
+    <div>
+      <h3 style="font-size:14px;font-weight:600;margin-bottom:8px;color:#374151">人均查询数 vs 用户数</h3>
+      <div id="regionBar" class="chart"></div>
+    </div>
+    <div>
+      <h3 style="font-size:14px;font-weight:600;margin-bottom:8px;color:#374151">高价值场景占比对比</h3>
+      <div id="regionHV" class="chart"></div>
+    </div>
+  </div>
+
+  <h3 style="font-size:14px;font-weight:600;margin:16px 0 10px">类别分布结构对比</h3>
+  <div id="regionCat" class="chart-lg"></div>
+
+  <div class="insight-box">
+    <h4>市场对标发现</h4>
+    <p><b>越南人均44次，低于韩国(75)、台湾(53)、香港(51)</b>——深度使用不足；但越南"客户开发/线索"占24%（其他市场只有7-15%）——<b>越南把AI当"找客户工具"用得最重</b>，这是本地化打法的信号。</p>
+    <p><b>越南"产品/运营"占9.4%，是台湾/香港的3倍</b>——说明越南商家运营诊断需求旺盛，可对应到 `ggs-customer-diagnostic` 六部曲、`vn-product-compliance-review` 等 skill 的深挖机会。</p>
+  </div>
+</div>
+
+<!-- ⑤趋势 -->
+<div class="section" id="trend">
+  <h2>⑤ 日度活跃趋势</h2>
+  <div class="desc">查询量与活跃人数每日走势</div>
+  <div id="daily" class="chart-lg"></div>
+  <div class="insight-box">
+    <h4>时间信号</h4>
+    <p><b>7月起明显爬坡</b>：日查询从6月均值45次爬到7月均值130次，7/7、7/9两个峰值（256次、226次），说明团队认知度快速提升；但峰值伴随明显波谷（7/4=10次、7/11=21次），使用还没形成稳定日常习惯，容易随培训冷却快速回落。</p>
+    <p><b>周末几乎不用</b>（周六周日仅113次，占比4.7%）—— 说明是"工作型工具"，非"个人生产力工具"，与"Alibaba Cloud CRM"绑定较深。</p>
+  </div>
+</div>
+
+<!-- ⑥深度 vs 尝鲜 -->
+<div class="section" id="tier-compare">
+  <h2>⑥ 深度用户 vs 尝鲜用户对比</h2>
+  <div class="desc">同样是55人，深度和尝鲜用户在场景选择上的差异</div>
+  <div class="grid-2">
+    <div>
+      <h3 style="font-size:14px;font-weight:600;margin-bottom:8px;color:#374151">场景占比对比（深度18人 vs 尝鲜13人）</h3>
+      <div id="tierRadar" class="chart-lg"></div>
+    </div>
+    <div>
+      <h3 style="font-size:14px;font-weight:600;margin-bottom:8px;color:#374151">域名深度差异</h3>
+      <div id="domainBar" class="chart-lg"></div>
+      <div class="side-note">
+        <b>acciowork.alibaba-inc.com</b> 域19人（多为试点/深度玩家）人均<b>65次</b>；<br>
+        <b>alibaba-inc.com</b> 域36人（普通销售邮箱）人均<b>32次</b>——差2倍。<br>
+        说明有引导的账号使用深度显著高，需把"引导"复制到普通销售域。
+      </div>
+    </div>
+  </div>
+
+  <div class="insight-box">
+    <h4>使用模式差异</h4>
+    <p><b>深度用户</b>：多轮对话式使用（"其他咨询"39%），复杂客户开发（25%），行业分析（12%）；<b>尝鲜用户</b>：客户开发（30%）+邮件触达（17%）+平台规则（13%）——尝鲜用户更多带着"具体一次性任务"而来，一旦没得到满意结果就走了。</p>
+    <p><b>关键差异</b>：深度用户会用 <code>&lt;skill_quotation&gt;</code> 主动引用 skill、上传文件、多轮追问；尝鲜用户几乎没有——<b>Skill生态可见性差 + 教育缺失</b>。</p>
+  </div>
+</div>
+
+<!-- ⑦KOL -->
+<div class="section" id="kol">
+  <h2>⑦ Top KOL 高质量 Prompt 样本</h2>
+  <div class="desc">从Top 8深度用户提取的可复制Prompt——建议整理成"越南销售Prompt金句集"</div>
+  <div id="kolList"></div>
+  <div class="insight-box good">
+    <h4>KOL 使用共性</h4>
+    <p>1. <b>会用 skill 引用</b>：主动 <code>&lt;skill_quotation name="ggs-Alibaba-B2B-Expert-html"&gt;</code> 调用行业专家；</p>
+    <p>2. <b>会挂载文件</b>：附 <code>@[report.pdf]</code>、店铺链接、CRM lead id，让AI基于真实上下文推理；</p>
+    <p>3. <b>多轮迭代</b>：先给出粗草稿，再逐步"调格式/加姓名/换语言/换模板"；</p>
+    <p>4. <b>目标明确</b>：如"11天内我要签下1个新单，怎么找"—— 结果导向式提问，AI能给出可执行方案。</p>
+  </div>
+</div>
+
+<!-- ⑧失败 -->
+<div class="section" id="fail">
+  <h2>⑧ 流失/误用样本</h2>
+  <div class="desc">从13位尝鲜用户中提取的典型"卡壳"prompt——用于设计onboarding修复</div>
+  <div id="failList"></div>
+  <div class="insight-box warn">
+    <h4>常见流失原因</h4>
+    <p>1. <b>Skill 引用格式错误/被截断</b>（多个 <code>&lt;skill_quotation&gt;</code> 半截）——用户不知道正确的skill调用姿势；</p>
+    <p>2. <b>身份认知类问题</b>（"英语不好能做阿里巴巴吗"）——对AI能力有误解，需要引导到工作流；</p>
+    <p>3. <b>Excel/文件导出需求</b>（"帮我导出Excel"）—— 产品输出能力未闭环，销售拿到内容无法直接用；</p>
+    <p>4. <b>粘贴管理动作</b>（"soạn kịch bản sales"、"performance evaluation reminder"）—— 把AI当纯文本工具用，没意识到它能做业务动作。</p>
+  </div>
+</div>
+
+<!-- ⑨用户明细 -->
+<div class="section" id="user-table">
+  <h2>⑨ 全量用户明细</h2>
+  <div class="desc">55位越南销售的完整使用画像，可搜索/排序</div>
+  <div class="filter-bar">
+    <input type="text" id="userSearch" placeholder="搜索邮箱/域名..." style="flex:1;min-width:200px">
+    <select id="tierFilter">
+      <option value="">全部分层</option>
+      <option>深度</option><option>重度</option><option>中度</option><option>轻度</option><option>尝鲜</option>
+    </select>
+    <select id="domainFilter">
+      <option value="">全部域名</option>
+      <option>acciowork.alibaba-inc.com</option>
+      <option>alibaba-inc.com</option>
+    </select>
+  </div>
+  <div style="max-height:500px;overflow-y:auto;border:1px solid #e5e7eb;border-radius:8px">
+    <table id="userTable">
+      <thead>
+        <tr>
+          <th>#</th><th>邮箱</th><th>分层</th><th>域名</th>
+          <th>总查询</th><th>活跃天数</th>
+          <th>客户开发</th><th>行业分析</th><th>产品运营</th>
+          <th>平台规则</th><th>报告方案</th><th>邮件触达</th><th>招商策略</th><th>其他</th>
+        </tr>
+      </thead>
+      <tbody id="userTbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ⑩改进建议 -->
+<div class="section" id="recommend">
+  <h2>⑩ 提升使用效率的10大改进建议</h2>
+  <div class="desc">按优先级+执行方分类，附具体量化目标</div>
+  <ul class="rec-list" id="recList"></ul>
+</div>
+
+<div class="footer">
+  数据源：/Users/zhangxu/Downloads/all_query_detail.xlsx · 分析口径：越南地区所有查询（2026-06-11至07-13）<br>
+  由 QoderWork 生成 · 建议与语雀现有版本 vn-salesbuddy-chart 互补使用
+</div>
+
+</div>
+
+<script>
+const D = {
+  "kpi":{"total_queries":2395,"unique_users":55,"active_days":32,"top10_share":54.6,"top20_share":80.9,"gini":0.58,"high_value_users":38,"high_value_pct":7.6},
+  "category":{"其他咨询":861,"客户开发/线索":572,"行业/市场分析":350,"产品/运营":224,"平台规则/知识":207,"邮件/触达":121,"报告/方案":56,"招商策略":4},
+  "region":{"越南":{"users":55,"total":2395,"per":44,"hv":7.6},"台湾":{"users":60,"total":3202,"per":53,"hv":5.6},"韩国":{"users":33,"total":2479,"per":75,"hv":4.8},"香港":{"users":18,"total":917,"per":51,"hv":7.2},"其他":{"users":117,"total":2543,"per":22,"hv":7.7}},
+  "region_cat":{"越南":{"客户开发/线索":23.9,"行业/市场分析":14.6,"产品/运营":9.4,"平台规则/知识":8.6,"邮件/触达":5.1,"报告/方案":2.3,"招商策略":0.2,"其他咨询":35.9},"台湾":{"客户开发/线索":7.0,"行业/市场分析":10.3,"产品/运营":3.2,"平台规则/知识":17.0,"邮件/触达":3.1,"报告/方案":2.2,"招商策略":0.3,"其他咨询":56.9},"韩国":{"客户开发/线索":7.1,"行业/市场分析":6.9,"产品/运营":7.1,"平台规则/知识":4.8,"邮件/触达":2.7,"报告/方案":1.4,"招商策略":0.6,"其他咨询":69.3},"香港":{"客户开发/线索":15.4,"行业/市场分析":13.6,"产品/运营":2.7,"平台规则/知识":8.8,"邮件/触达":3.4,"报告/方案":2.8,"招商策略":1.0,"其他咨询":52.2}},
+  "tier_dist":{"深度":{"n":8,"q":1143},"重度":{"n":10,"q":737},"中度":{"n":13,"q":363},"轻度":{"n":11,"q":118},"尝鲜":{"n":13,"q":34}},
+  "tier_cat":{"deep":{"其他咨询":39.1,"客户开发/线索":25.1,"行业/市场分析":12.0,"平台规则/知识":8.1,"产品/运营":8.0,"邮件/触达":4.8,"报告/方案":2.7,"招商策略":0.2},"light":{"客户开发/线索":30.4,"其他咨询":21.7,"邮件/触达":17.4,"平台规则/知识":13.0,"产品/运营":8.7,"报告/方案":4.3,"行业/市场分析":4.3,"招商策略":0}},
+  "domain":{"acciowork.alibaba-inc.com":{"queries":1242,"users":19,"per":65.4},"alibaba-inc.com":{"queries":1153,"users":36,"per":32.0}},
+  "daily":[{"d":"06-11","q":33,"u":18},{"d":"06-12","q":52,"u":15},{"d":"06-13","q":11,"u":3},{"d":"06-14","q":4,"u":1},{"d":"06-15","q":71,"u":17},{"d":"06-16","q":90,"u":15},{"d":"06-17","q":68,"u":12},{"d":"06-18","q":38,"u":11},{"d":"06-19","q":55,"u":13},{"d":"06-20","q":9,"u":3},{"d":"06-22","q":61,"u":14},{"d":"06-23","q":33,"u":11},{"d":"06-24","q":44,"u":18},{"d":"06-25","q":40,"u":9},{"d":"06-26","q":37,"u":7},{"d":"06-27","q":2,"u":1},{"d":"06-28","q":2,"u":2},{"d":"06-29","q":55,"u":19},{"d":"06-30","q":60,"u":13},{"d":"07-01","q":63,"u":18},{"d":"07-02","q":83,"u":22},{"d":"07-03","q":252,"u":22},{"d":"07-04","q":10,"u":6},{"d":"07-05","q":12,"u":4},{"d":"07-06","q":119,"u":21},{"d":"07-07","q":256,"u":27},{"d":"07-08","q":187,"u":28},{"d":"07-09","q":226,"u":28},{"d":"07-10","q":161,"u":22},{"d":"07-11","q":21,"u":6},{"d":"07-12","q":42,"u":10},{"d":"07-13","q":198,"u":27}]
+};
+const USERS = [{"邮箱": "huvn.nguyn@acciowork.alibaba-inc.com", "查询数": 228, "活跃天数": 25, "产品/运营": 7, "其他咨询": 46, "客户开发/线索": 131, "平台规则/知识": 14, "报告/方案": 5, "招商策略": 0, "行业/市场分析": 23, "邮件/触达": 2, "域名": "acciowork.alibaba-inc.com", "分层": "深度"}, {"邮箱": "hongphc.nguyen@acciowork.alibaba-inc.com", "查询数": 182, "活跃天数": 22, "产品/运营": 16, "其他咨询": 89, "客户开发/线索": 33, "平台规则/知识": 6, "报告/方案": 2, "招商策略": 0, "行业/市场分析": 31, "邮件/触达": 5, "域名": "acciowork.alibaba-inc.com", "分层": "深度"}, {"邮箱": "xuanhien.ngo@acciowork.alibaba-inc.com", "查询数": 153, "活跃天数": 13, "产品/运营": 18, "其他咨询": 62, "客户开发/线索": 25, "平台规则/知识": 12, "报告/方案": 4, "招商策略": 0, "行业/市场分析": 21, "邮件/触达": 11, "域名": "acciowork.alibaba-inc.com", "分层": "深度"}, {"邮箱": "litrungt02325063@alibaba-inc.com", "查询数": 129, "活跃天数": 15, "产品/运营": 10, "其他咨询": 40, "客户开发/线索": 56, "平台规则/知识": 2, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 17, "邮件/触达": 4, "域名": "alibaba-inc.com", "分层": "深度"}, {"邮箱": "nguyntr02094014@alibaba-inc.com", "查询数": 127, "活跃天数": 14, "产品/运营": 6, "其他咨询": 59, "客户开发/线索": 28, "平台规则/知识": 14, "报告/方案": 3, "招商策略": 2, "行业/市场分析": 14, "邮件/触达": 1, "域名": "alibaba-inc.com", "分层": "深度"}, {"邮箱": "tranthith02437180@alibaba-inc.com", "查询数": 114, "活跃天数": 13, "产品/运营": 3, "其他咨询": 61, "客户开发/线索": 13, "平台规则/知识": 4, "报告/方案": 16, "招商策略": 1, "行业/市场分析": 12, "邮件/触达": 4, "域名": "alibaba-inc.com", "分层": "深度"}, {"邮箱": "n.nguyen@acciowork.alibaba-inc.com", "查询数": 110, "活跃天数": 15, "产品/运营": 4, "其他咨询": 36, "客户开发/线索": 45, "平台规则/知识": 5, "报告/方案": 6, "招商策略": 0, "行业/市场分析": 12, "邮件/触达": 2, "域名": "acciowork.alibaba-inc.com", "分层": "深度"}, {"邮箱": "thng.l@acciowork.alibaba-inc.com", "查询数": 105, "活跃天数": 15, "产品/运营": 17, "其他咨询": 40, "客户开发/线索": 16, "平台规则/知识": 11, "报告/方案": 1, "招商策略": 1, "行业/市场分析": 15, "邮件/触达": 4, "域名": "acciowork.alibaba-inc.com", "分层": "深度"}, {"邮箱": "phanthiki02531005@alibaba-inc.com", "查询数": 81, "活跃天数": 8, "产品/运营": 9, "其他咨询": 45, "客户开发/线索": 10, "平台规则/知识": 2, "报告/方案": 1, "招商策略": 0, "行业/市场分析": 9, "邮件/触达": 5, "域名": "alibaba-inc.com", "分层": "重度"}, {"邮箱": "tranthith02552211@alibaba-inc.com", "查询数": 79, "活跃天数": 7, "产品/运营": 3, "其他咨询": 51, "客户开发/线索": 1, "平台规则/知识": 4, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 16, "邮件/触达": 4, "域名": "alibaba-inc.com", "分层": "重度"}, {"邮箱": "nam.nguyen@alibaba-inc.com", "查询数": 79, "活跃天数": 10, "产品/运营": 9, "其他咨询": 24, "客户开发/线索": 18, "平台规则/知识": 25, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 0, "邮件/触达": 3, "域名": "alibaba-inc.com", "分层": "重度"}, {"邮箱": "xuandan.pham@acciowork.alibaba-inc.com", "查询数": 78, "活跃天数": 16, "产品/运营": 8, "其他咨询": 38, "客户开发/线索": 14, "平台规则/知识": 2, "报告/方案": 5, "招商策略": 0, "行业/市场分析": 8, "邮件/触达": 3, "域名": "acciowork.alibaba-inc.com", "分层": "重度"}, {"邮箱": "phamnhi01@alibaba-inc.com", "查询数": 74, "活跃天数": 14, "产品/运营": 4, "其他咨询": 11, "客户开发/线索": 10, "平台规则/知识": 14, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 19, "邮件/触达": 16, "域名": "alibaba-inc.com", "分层": "重度"}, {"邮箱": "nguyen.haiyen@acciowork.alibaba-inc.com", "查询数": 73, "活跃天数": 16, "产品/运营": 2, "其他咨询": 35, "客户开发/线索": 11, "平台规则/知识": 10, "报告/方案": 1, "招商策略": 0, "行业/市场分析": 7, "邮件/触达": 7, "域名": "acciowork.alibaba-inc.com", "分层": "重度"}, {"邮箱": "cuminhkhi02377600@alibaba-inc.com", "查询数": 64, "活跃天数": 13, "产品/运营": 5, "其他咨询": 18, "客户开发/线索": 32, "平台规则/知识": 3, "报告/方案": 1, "招商策略": 0, "行业/市场分析": 2, "邮件/触达": 3, "域名": "alibaba-inc.com", "分层": "重度"}, {"邮箱": "tm.phanc@acciowork.alibaba-inc.com", "查询数": 63, "活跃天数": 13, "产品/运营": 11, "其他咨询": 24, "客户开发/线索": 8, "平台规则/知识": 9, "报告/方案": 1, "招商策略": 0, "行业/市场分析": 6, "邮件/触达": 4, "域名": "acciowork.alibaba-inc.com", "分层": "重度"}, {"邮箱": "hathithuh02559998@alibaba-inc.com", "查询数": 53, "活跃天数": 13, "产品/运营": 6, "其他咨询": 26, "客户开发/线索": 8, "平台规则/知识": 2, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 4, "邮件/触达": 7, "域名": "alibaba-inc.com", "分层": "重度"}, {"邮箱": "vnthnh.l@acciowork.alibaba-inc.com", "查询数": 52, "活跃天数": 14, "产品/运营": 10, "其他咨询": 16, "客户开发/线索": 3, "平台规则/知识": 10, "报告/方案": 4, "招商策略": 0, "行业/市场分析": 5, "邮件/触达": 4, "域名": "acciowork.alibaba-inc.com", "分层": "重度"}, {"邮箱": "vithi.dng@acciowork.alibaba-inc.com", "查询数": 48, "活跃天数": 5, "产品/运营": 9, "其他咨询": 25, "客户开发/线索": 4, "平台规则/知识": 1, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 8, "邮件/触达": 1, "域名": "acciowork.alibaba-inc.com", "分层": "中度"}, {"邮箱": "trngqu.nguyn@acciowork.alibaba-inc.com", "查询数": 45, "活跃天数": 9, "产品/运营": 7, "其他咨询": 8, "客户开发/线索": 4, "平台规则/知识": 9, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 17, "邮件/触达": 0, "域名": "acciowork.alibaba-inc.com", "分层": "中度"}, {"邮箱": "nguynth02205179@alibaba-inc.com", "查询数": 38, "活跃天数": 14, "产品/运营": 0, "其他咨询": 12, "客户开发/线索": 16, "平台规则/知识": 3, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 3, "邮件/触达": 4, "域名": "alibaba-inc.com", "分层": "中度"}, {"邮箱": "quyhi01984239@alibaba-inc.com", "查询数": 33, "活跃天数": 8, "产品/运营": 7, "其他咨询": 3, "客户开发/线索": 2, "平台规则/知识": 0, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 20, "邮件/触达": 1, "域名": "alibaba-inc.com", "分层": "中度"}, {"邮箱": "thilinh.n@acciowork.alibaba-inc.com", "查询数": 31, "活跃天数": 6, "产品/运营": 0, "其他咨询": 17, "客户开发/线索": 4, "平台规则/知识": 2, "报告/方案": 2, "招商策略": 0, "行业/市场分析": 5, "邮件/触达": 1, "域名": "acciowork.alibaba-inc.com", "分层": "中度"}, {"邮箱": "myngo2410@alibaba-inc.com", "查询数": 29, "活跃天数": 11, "产品/运营": 1, "其他咨询": 5, "客户开发/线索": 15, "平台规则/知识": 1, "报告/方案": 2, "招商策略": 0, "行业/市场分析": 3, "邮件/触达": 2, "域名": "alibaba-inc.com", "分层": "中度"}, {"邮箱": "dothiyvy02487461@alibaba-inc.com", "查询数": 29, "活跃天数": 7, "产品/运营": 8, "其他咨询": 11, "客户开发/线索": 5, "平台规则/知识": 3, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 0, "邮件/触达": 2, "域名": "alibaba-inc.com", "分层": "中度"}, {"邮箱": "hongthom.do@acciowork.alibaba-inc.com", "查询数": 28, "活跃天数": 5, "产品/运营": 2, "其他咨询": 6, "客户开发/线索": 2, "平台规则/知识": 2, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 15, "邮件/触达": 1, "域名": "acciowork.alibaba-inc.com", "分层": "中度"}, {"邮箱": "symylinh@alibaba-inc.com", "查询数": 27, "活跃天数": 11, "产品/运营": 5, "其他咨询": 6, "客户开发/线索": 5, "平台规则/知识": 3, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 4, "邮件/触达": 4, "域名": "alibaba-inc.com", "分层": "中度"}, {"邮箱": "thanhphuong@alibaba-inc.com", "查询数": 27, "活跃天数": 7, "产品/运营": 7, "其他咨询": 2, "客户开发/线索": 4, "平台规则/知识": 3, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 10, "邮件/触达": 1, "域名": "alibaba-inc.com", "分层": "中度"}, {"邮箱": "chminh.vi@alibaba-inc.com", "查询数": 25, "活跃天数": 12, "产品/运营": 6, "其他咨询": 4, "客户开发/线索": 1, "平台规则/知识": 7, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 4, "邮件/触达": 3, "域名": "alibaba-inc.com", "分层": "中度"}, {"邮箱": "vuthihong02568368@alibaba-inc.com", "查询数": 23, "活跃天数": 5, "产品/运营": 1, "其他咨询": 4, "客户开发/线索": 5, "平台规则/知识": 5, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 8, "邮件/触达": 0, "域名": "alibaba-inc.com", "分层": "中度"}, {"邮箱": "directsales@alibaba-inc.com", "查询数": 23, "活跃天数": 10, "产品/运营": 1, "其他咨询": 2, "客户开发/线索": 10, "平台规则/知识": 4, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 5, "邮件/触达": 1, "域名": "alibaba-inc.com", "分层": "中度"}, {"邮箱": "tathiminh02367340@alibaba-inc.com", "查询数": 20, "活跃天数": 3, "产品/运营": 0, "其他咨询": 7, "客户开发/线索": 0, "平台规则/知识": 5, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 4, "邮件/触达": 4, "域名": "alibaba-inc.com", "分层": "轻度"}, {"邮箱": "trnthin02041232@alibaba-inc.com", "查询数": 17, "活跃天数": 9, "产品/运营": 3, "其他咨询": 0, "客户开发/线索": 2, "平台规则/知识": 1, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 10, "邮件/触达": 1, "域名": "alibaba-inc.com", "分层": "轻度"}, {"邮箱": "yongzhu.zyz@acciowork.alibaba-inc.com", "查询数": 16, "活跃天数": 15, "产品/运营": 16, "其他咨询": 0, "客户开发/线索": 0, "平台规则/知识": 0, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 0, "邮件/触达": 0, "域名": "acciowork.alibaba-inc.com", "分层": "轻度"}, {"邮箱": "dinhhoang02290820@alibaba-inc.com", "查询数": 13, "活跃天数": 6, "产品/运营": 0, "其他咨询": 2, "客户开发/线索": 6, "平台规则/知识": 0, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 4, "邮件/触达": 1, "域名": "alibaba-inc.com", "分层": "轻度"}, {"邮箱": "thibinh.truong@acciowork.alibaba-inc.com", "查询数": 11, "活跃天数": 6, "产品/运营": 0, "其他咨询": 2, "客户开发/线索": 7, "平台规则/知识": 0, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 2, "邮件/触达": 0, "域名": "acciowork.alibaba-inc.com", "分层": "轻度"}, {"邮箱": "vuleducan02049621@alibaba-inc.com", "查询数": 10, "活跃天数": 4, "产品/运营": 0, "其他咨询": 7, "客户开发/线索": 3, "平台规则/知识": 0, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 0, "邮件/触达": 0, "域名": "alibaba-inc.com", "分层": "轻度"}, {"邮箱": "tranhuuye02266250@alibaba-inc.com", "查询数": 8, "活跃天数": 3, "产品/运营": 1, "其他咨询": 2, "客户开发/线索": 2, "平台规则/知识": 1, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 1, "邮件/触达": 1, "域名": "alibaba-inc.com", "分层": "轻度"}, {"邮箱": "mike.nguyen@acciowork.alibaba-inc.com", "查询数": 8, "活跃天数": 4, "产品/运营": 0, "其他咨询": 4, "客户开发/线索": 2, "平台规则/知识": 1, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 1, "邮件/触达": 0, "域名": "acciowork.alibaba-inc.com", "分层": "轻度"}, {"邮箱": "khixng.h@acciowork.alibaba-inc.com", "查询数": 7, "活跃天数": 3, "产品/运营": 0, "其他咨询": 4, "客户开发/线索": 2, "平台规则/知识": 0, "报告/方案": 1, "招商策略": 0, "行业/市场分析": 0, "邮件/触达": 0, "域名": "acciowork.alibaba-inc.com", "分层": "轻度"}, {"邮箱": "servicevietnam@alibaba-inc.com", "查询数": 6, "活跃天数": 3, "产品/运营": 0, "其他咨询": 2, "客户开发/线索": 2, "平台规则/知识": 2, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 0, "邮件/触达": 0, "域名": "alibaba-inc.com", "分层": "轻度"}, {"邮箱": "anhduy.dao@alibaba-inc.com", "查询数": 6, "活跃天数": 4, "产品/运营": 0, "其他咨询": 0, "客户开发/线索": 0, "平台规则/知识": 2, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 4, "邮件/触达": 0, "域名": "alibaba-inc.com", "分层": "轻度"}, {"邮箱": "lutrngb02544885@alibaba-inc.com", "查询数": 5, "活跃天数": 4, "产品/运营": 0, "其他咨询": 2, "客户开发/线索": 2, "平台规则/知识": 0, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 0, "邮件/触达": 1, "域名": "alibaba-inc.com", "分层": "尝鲜"}, {"邮箱": "quynhanh.du@acciowork.alibaba-inc.com", "查询数": 3, "活跃天数": 1, "产品/运营": 0, "其他咨询": 1, "客户开发/线索": 0, "平台规则/知识": 0, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 0, "邮件/触达": 2, "域名": "acciowork.alibaba-inc.com", "分层": "尝鲜"}, {"邮箱": "trngqu.nguyn@alibaba-inc.com", "查询数": 3, "活跃天数": 2, "产品/运营": 0, "其他咨询": 1, "客户开发/线索": 1, "平台规则/知识": 1, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 0, "邮件/触达": 0, "域名": "alibaba-inc.com", "分层": "尝鲜"}, {"邮箱": "anhtruchuynh@alibaba-inc.com", "查询数": 2, "活跃天数": 1, "产品/运营": 1, "其他咨询": 0, "客户开发/线索": 0, "平台规则/知识": 1, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 0, "邮件/触达": 0, "域名": "alibaba-inc.com", "分层": "尝鲜"}, {"邮箱": "dangthanh02011511@alibaba-inc.com", "查询数": 2, "活跃天数": 1, "产品/运营": 0, "其他咨询": 1, "客户开发/线索": 1, "平台规则/知识": 0, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 0, "邮件/触达": 0, "域名": "alibaba-inc.com", "分层": "尝鲜"}, {"邮箱": "my.nguyen@alibaba-inc.com", "查询数": 1, "活跃天数": 1, "产品/运营": 0, "其他咨询": 0, "客户开发/线索": 0, "平台规则/知识": 1, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 0, "邮件/触达": 0, "域名": "alibaba-inc.com", "分层": "尝鲜"}, {"邮箱": "nguyenthi02249677@alibaba-inc.com", "查询数": 1, "活跃天数": 1, "产品/运营": 0, "其他咨询": 0, "客户开发/线索": 0, "平台规则/知识": 0, "报告/方案": 1, "招商策略": 0, "行业/市场分析": 0, "邮件/触达": 0, "域名": "alibaba-inc.com", "分层": "尝鲜"}, {"邮箱": "thuytien.le@alibaba-inc.com", "查询数": 1, "活跃天数": 1, "产品/运营": 0, "其他咨询": 0, "客户开发/线索": 1, "平台规则/知识": 0, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 0, "邮件/触达": 0, "域名": "alibaba-inc.com", "分层": "尝鲜"}, {"邮箱": "hothisang01759197@alibaba-inc.com", "查询数": 1, "活跃天数": 1, "产品/运营": 0, "其他咨询": 0, "客户开发/线索": 1, "平台规则/知识": 0, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 0, "邮件/触达": 0, "域名": "alibaba-inc.com", "分层": "尝鲜"}, {"邮箱": "hongthom.do@alibaba-inc.com", "查询数": 1, "活跃天数": 1, "产品/运营": 0, "其他咨询": 0, "客户开发/线索": 0, "平台规则/知识": 0, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 1, "邮件/触达": 0, "域名": "alibaba-inc.com", "分层": "尝鲜"}, {"邮箱": "voanhtuan02092993@alibaba-inc.com", "查询数": 1, "活跃天数": 1, "产品/运营": 0, "其他咨询": 0, "客户开发/线索": 1, "平台规则/知识": 0, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 0, "邮件/触达": 0, "域名": "alibaba-inc.com", "分层": "尝鲜"}, {"邮箱": "nguyenvan02129557@alibaba-inc.com", "查询数": 1, "活跃天数": 1, "产品/运营": 0, "其他咨询": 0, "客户开发/线索": 0, "平台规则/知识": 0, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 0, "邮件/触达": 1, "域名": "alibaba-inc.com", "分层": "尝鲜"}, {"邮箱": "cangyu.myf@acciowork.alibaba-inc.com", "查询数": 1, "活跃天数": 1, "产品/运营": 1, "其他咨询": 0, "客户开发/线索": 0, "平台规则/知识": 0, "报告/方案": 0, "招商策略": 0, "行业/市场分析": 0, "邮件/触达": 0, "域名": "acciowork.alibaba-inc.com", "分层": "尝鲜"}];
+const KOL = [{"user": "huvn.nguyn", "cat": "行业/市场分析", "query_vn": "chuẩn rồi. Giữ y nguyên nhé.\\r\\nChỉ còn 1 điều nữa thôi.\\r\\ntôi thật sự cần thêm mỗi ngành hàng có thêm 3-5 link gian hàng alibaba liên quan đến ngành hàng", "query_zh": "对了，保持不变。只剩一点：每个行业请再补充3-5个阿里巴巴相关店铺链接"}, {"user": "huvn.nguyn", "cat": "客户开发/线索", "query_vn": "Thực hiện quy trình phát triển khách hàng mới tại Việt Nam hôm nay theo SOP trong MEMORY.md: Tìm doanh nghiệp trên GlobalSources/EC21 chưa có trên Alibaba, quét tín hiệu tuyển dụng XNK, xác minh MST, phân loại kênh liên hệ và xuất file CSV + báo cáo ngày.", "query_zh": "今天按照 MEMORY.md 中的 SOP 执行越南新客户开发：在 GlobalSources/EC21 上找尚未入驻阿里巴巴的公司，扫描进出口招聘信号，验证税号，分类联系渠道，导出 CSV + 日报"}, {"user": "hongphc.nguyen", "cat": "行业/市场分析", "query_vn": "Phân tích thêm thị trường này của khách mong muốn xuất khẩu qua\\nNghiên cứu phần top ranking với nhưng sản phẩm trong file", "query_zh": ""}, {"user": "hongphc.nguyen", "cat": "行业/市场分析", "query_vn": "<skill_quotation name=\\\"ggs-Alibaba-B2B-Expert-html\\\" path=\\\"C:\\\\Users\\\\499896\\\\.accio\\\\accounts\\\\1768055296_5001\\\\skills\\\\ggs-Alibaba-B2B-Expert-html\\\">read this skill first</skill_quotation>\\ntạo cho tôi báo cáo ngành  túi vải handmade theo skill trên , có liệt kê rõ các mục , thị trường , nhà bán , top sản phẩm hot , giá sản phẩm theo skill . và chuyển thanh file html", "query_zh": ""}, {"user": "xuanhien.ngo", "cat": "邮件/触达", "query_vn": "Thật sự tôi không hiểu bạn đã làm ra cái gì luôn á. Tôi nói bạn học làm báo cáo chứ tôi k nói bạn viết statement ra và đóng khung cho nó. Phải có cái gì đó diễn giải được chứ. Đọc vô giống 1 đứa con nít đang làm. Bạn là chuyên gia về thương mại điện tử, chuyên gia làm báo cáo mà.", "query_zh": ""}, {"user": "xuanhien.ngo", "cat": "客户开发/线索", "query_vn": "Tôi là senior Accountmanager tại Alibaba.com. Tôi còn 11 ngày nữa để có thể chốt 1 đơn mới. Tôi thật sự cần 1 đơn này. Vậy tôi nên tìm khách hàng thế nào để chốt ngay", "query_zh": "我是 Alibaba.com 的高级客户经理。我还有 11 天就要签下一个新单。我真的非常需要这一单。那我应该如何找到客户立即成交呢"}, {"user": "litrungt02325063", "cat": "邮件/触达", "query_vn": "có thể thêm thông tin nguời làm báo cáo theo thông tin này không \\nLucas\\nPhone: 0931852589\\nMail: litrungt02325063@alibaba-inc.com", "query_zh": "能否按以下信息添加报告制作人：Lucas，电话0931852589，邮箱litrungt02325063@alibaba-inc.com"}, {"user": "litrungt02325063", "cat": "客户开发/线索", "query_vn": "Phân tích kỹ hơn nhu cầu của khách hàng các nước có nhu cầu lớn, họ cần mẫu mã, kiểu dáng (nên có hình ảnh mô tả), giá cả họ sẵn sàng chi trả như thế nào", "query_zh": "进一步分析需求较大的国家客户的需求，包括他们需要的款式、造型（最好配有图片描述），以及他们愿意支付的价格区间"}, {"user": "nguyntr02094014", "cat": "客户开发/线索", "query_vn": "1601982426 2802652067 1101978703 1100448823 3603561346 đây là Business Registration No. của các lead trong crm. hãy chuyển các lead có BR number này ra public pool sau đó pick up lại ngay lập tức. hãy đảm bảo rằng phải pick lại ngay lập tức sau khi release, chứ ko sale khác sẽ pick mất", "query_zh": ""}, {"user": "nguyntr02094014", "cat": "行业/市场分析", "query_vn": "@[service_report (6).pdf](file:C:/Users/nguye/Downloads/service_report (6).pdf) @[report.pdf](file:C:/Users/nguye/Downloads/report.pdf) dùng skill để phân tích cửa hàng trên dựa vào 2 file pdf và 2 ảnh trên, file báo cáo html, song ngữ anh việt, đây là công ty KINGTEC GROUP VIETNAM CO LTD", "query_zh": "@service_report (6).pdf... @report.pdf... 用 skill 分析上面店铺，基于两份 PDF 和两张图，输出 HTML 报告，英越双语，这是 KINGTEC GROUP VIETNAM CO LTD"}, {"user": "tranthith02437180", "cat": "报告/方案", "query_vn": "t khá hài lòng với báo cáo này rồi, nhưng sửa thêm 1 xíu phông chữ ở phần đầu trong file giống ảnh nhé.\\nphần màu vàng là báo cáo hiệu suất vận hành Report (June 2026)\\nphần chữ to trắng là tên Vietnam ZIling.......\\nbên dưới member id và link store vẫn giữu nguyên", "query_zh": "我对这份报告挺满意了，但开头字体再按图改一下。\\n黄色部分是运营表现报告 Report（June 2026）\\n大白字是公司名 Vietnam ZIling.......\\n下面Member ID和店铺链接保留\\nprepared by: Tran thi thu hhien, update on :....\\nfile:///C:/Users/Windows/.accio/accounts/7085213432/agents/DID-56D009-1056D009U1779250-1392-14541A/project/ziling_professional_report_v6.html"}, {"user": "tranthith02437180", "cat": "行业/市场分析", "query_vn": "tổng hợp lại toàn bộ và đưa ra báo cáo chuẩn nhất( theo tamplate SWORLD_June_2026_Operational_Diagnostic_Growth_Report_v9_full_gap ban đầu), bổ sung những điểm key bạn cho là cần thiết để tạo thành 1 bản báo cáo hoàn chỉnh gửi kháhc hàng, đi từ tổng quan gian hàng, store performan( bảng chỉ số và industry gap giữ nguyên), đến chỉ ra những diểm tốt avf điểm cần cải thiện", "query_zh": "全部汇总并给出最标准报告（按最初的SWORLD_June_2026_Operational_Diagnostic_Growth_Report_v9_full_gap模板），补充你认为关键的内容，形成一份完整可发给客户的报告，从店铺总览、店铺表现（指标表与行业gap保持不变），到指出优点和待改进点"}, {"user": "n.nguyen", "cat": "客户开发/线索", "query_vn": "phí sàn trong nước đang tăng lên hơn 30%, do đó chúng tôi đang đẩy mạnh tiếp cận thêm khách hàng đang kinh doanh sàn b2c trong nước - dịch sang tiếng Anh", "query_zh": "国内平台费用正在上涨超过30%，因此我们正在加大力度接触更多经营国内 B2C 平台的客户 - 翻译成英文"}, {"user": "n.nguyen", "cat": "客户开发/线索", "query_vn": "Danh sách 105 Leads đầy đủ: Danh_sach_Leads_San_xuat_VN_Alibaba.md (Đã cập nhật đúng tên tệp).  \\nF&B & Gia vị (30 lead): Các đơn vị đầu ngành như Vinasamex, Betrimex, Phuc Sinh.\\nGỗ & Thủ công mỹ nghệ (33 lead): Các xưởng nội thất và đồ chơi thú cưng gỗ cà phê.\\nCơ khí & Ngũ kim (22 lead): Các xưởng CNC, Bu lông ốc vít (PMTT, Seiki).\\nBao bì & Phụ liệu (20 lead): Các xưởng bao bì giấy và phụ liệu", "query_zh": ""}, {"user": "thng.l", "cat": "行业/市场分析", "query_vn": "<skill_quotation name=\\\"ggs-Alibaba-B2B-Expert\\\" path=\\\"C:\\\\Users\\\\499780\\\\.accio\\\\accounts\\\\7089178605_5001\\\\skills\\\\ggs-Alibaba-B2B-Expert\\\">read this skill first</skill_quotation>\\nlàm cho tôi 1 báo cáo về ngành hàng nhang xuất khẩu. phân tích tiêm năng nhàng xuất khẩu tại thị trường Việt nam. chuyên sâu nhang quế. link gian hàng của việt nam và trung quốc. so san giá, phương án xuất khẩu nhang", "query_zh": ""}, {"user": "thng.l", "cat": "行业/市场分析", "query_vn": "<skill_quotation name=\\\"ggs-Alibaba-B2B-Expert\\\" path=\\\"C:\\\\Users\\\\499780\\\\.accio\\\\accounts\\\\7089178605_5001\\\\skills\\\\ggs-Alibaba-B2B-Expert\\\">read this skill first</skill_quotation>\\nlàm cho tôi báo cáo ngành Trà xuất từ việt nam và có thêm so sánh giá và đối thủ cạnh tranh từ trung quốc", "query_zh": ""}];
+const FAIL = [{"user": "hongthom.do", "cat": "行业/市场分析", "query_vn": "<skill_quotation name=\\\"ggs-Alibaba-B2B-Expert-html\\\" path=\\\"C:\\\\Users\\\\461502\\\\.accio\\\\accounts\\\\7088332617\\\\skills\\\\ggs-Alibaba-B2B-Expert-html\\\">read this skill first</skill_quotation>\\nxuất  báo c", "query_zh": "<skill_quotation name=\"ggs-Alibaba-B2B-Expert-html\" path=\"C:\\\\Users\\\\461502\\\\.accio\\\\accounts\\\\7088332617\\\\skills\\\\ggs-Alibaba-B2B-Expert-html\">read t"}, {"user": "quynhanh.du", "cat": "其他咨询", "query_vn": "Tóm tắt quy mô các sự kiện của Amazon Global Selling Việt Nam, xem sự kiện như này quy mô tầm bao nhiêu khách", "query_zh": "总结Amazon Global Selling越南站各类活动的规模，看看这类活动大概有多少参会者。"}, {"user": "nguyenthi02249677", "cat": "报告/方案", "query_vn": "@[store-report-vn1391560801rvra-vi.html](file:C:/Users/WB02249677/Downloads/store-report-vn1391560801rvra-vi.html) \\nhọc file này để sau này làm báo cáo i chang format giúp tôi", "query_zh": "学习这份店铺报告格式，以后按同样格式做报告"}, {"user": "my.nguyen", "cat": "平台规则/知识", "query_vn": "Dear all，,\\n\\n\\nKindly reminder for DS FTE FY27-Q1 Performance Evaluation.Pls pay attention and finish ontime.\\n\\n\\n一、TIMELINE\\n \\nSelf-evaluation: July 1st - July 3rd\\n\\nSupervisors-evalution: July 3", "query_zh": "Dear all，,\\n\\n\\nKindly reminder for DS FTE FY27-Q1 Performance Evaluation.Pls pay attention and finish ontime.\\n\\n\\n一、TIMELINE\\n \\nSelf-evaluation: Ju"}, {"user": "hothisang01759197", "cat": "客户开发/线索", "query_vn": "<skill_quotation name=\\\"sales-negotiator\\\" path=\\\"/Users/poca/.accio/accounts/7089605372/skills/sales-negotiator\\\">read this skill first</skill_quotation>\\nSoạn cho tôi một kich bản sales cho lần đầu ", "query_zh": ""}, {"user": "voanhtuan02092993", "cat": "客户开发/线索", "query_vn": "domain:8es61n-zs.myshopify.com\\nClient ID:***REDACTED***, secret key:***REDACTED***, Shopify service account address:\\ndelivery@shopify-pubsub-webhooks.iam.gs", "query_zh": ""}, {"user": "lutrngb02544885", "cat": "其他咨询", "query_vn": "Bạn vui lòng xuất ra file Excel giúp tôi", "query_zh": ""}, {"user": "anhtruchuynh", "cat": "平台规则/知识", "query_vn": "Không giỏi tiếng Anh, không có chứng chỉ thì có làm Alibaba được không", "query_zh": "英语不好，没有证书，能做阿里巴巴吗？"}, {"user": "dangthanh02011511", "cat": "客户开发/线索", "query_vn": "@[0. ADVERTISING ON ALIBABA.COM - BASICS (1).pdf](file:C:/Users/TAI DANG/Downloads/0. ADVERTISING ON ALIBABA.COM - BASICS (1).pdf) Viết một email giới thiệu về các gói quảng cáo trên ALibaba.com cho k", "query_zh": "@[0. ADVERTISING ON ALIBABA.COM - BASICS (1).pdf](file:C:/Users/TAI DANG/Downloads/0. ADVERTISING ON ALIBABA.COM - BASICS (1).pdf) 用这份文件的信息写一封介绍阿里巴巴广告"}, {"user": "lutrngb02544885", "cat": "客户开发/线索", "query_vn": "Tôi là Bảo, nhân viên Phát triển Kinh doanh tại Alibaba.com. Alibaba.com là sàn thương mại điện tử B2B lớn nhất thế giới do tỷ phú Jack Ma thành lập. Alibaba.com hỗ trợ các doanh nghiệp tiếp cận khách", "query_zh": "我是阿里巴巴越南客户经理Bảo。请从VIFA ASEAN 2025官网抓取所有参展越南企业，结合税号、法律图书馆等渠道，整理成Excel，字段包括：序号、企业名称、税号、经营产品、Product、地址、联系电话、网站、信息来源。如可能，对接Orion CRM并按规则标色：红色=已有阿里店铺/河内注册"}];
+const RECS = [
+  {n:1, pri:"P0", title:"尝鲜用户 1v1 激活救援", body:"针对13位使用≤5次的用户拉小群，每人分配Top KOL做1v1陪跑，用他们自己的私海客户走通1个完整workflow（找客户→背调→写开发信）", owner:"分组主管", target:"14天内让≥8人使用次数破10", metric:"月末≥5次占比从24%降至10%"},
+  {n:2, pri:"P0", title:"救活'招商策略'和'报告/方案'两个死场景", body:"每周固定推2个模板到钉钉群：①周报机器人（基于本周私海动作生成客户诊断稿）；②拜访前briefing（CRM点客户名一键生成商业计划书草稿）", owner:"产品/运营", target:"招商策略月使用≥50次（当前33天仅4次）", metric:"报告/方案覆盖用户从17→30"},
+  {n:3, pri:"P1", title:"入口预置10个越南场景Prompt模板", body:"参照Top KOL的高质量prompt，做成参数化模板：如'找X品类X地区工厂+核验税号+3语开发信'、'客户店铺诊断报告'等，点击填参数即可运行", owner:"产品", target:"模板点击率≥50%", metric:"人均查询数从44↑到韩国水平75"},
+  {n:4, pri:"P1", title:"KOL Prompt 金句集 + 早会5分钟循环", body:"Top 8深度用户的query筛选后，做成'越南销售Prompt金句集'（越语版），选3-5条在早会滚动播放；huvn.nguyn/hongphc.nguyen/xuanhien.ngo三位可作团队Ambassador", owner:"分组主管+培训", target:"金句集≥30条", metric:"多轮对话用户比例从15%→30%"},
+  {n:5, pri:"P1", title:"修复长耗时/挂起体验", body:"16条查询耗时>1小时（最长91小时），说明任务挂起或结果未送达。加超时+重试+'结果就绪'钉钉推送闭环", owner:"产品/工程", target:"P95耗时<180秒", metric:"耗时>1h的请求降至0"},
+  {n:6, pri:"P1", title:"越语UI + 一键切换语言", body:"采样发现大量'chuyển qua tiếng anh'（改成英文）、'dịch tiếng việt'（翻译越语）请求—— 说明产品语言切换按钮不直观。上一个'中/越/英 一键切换'到对话头部", owner:"产品设计", target:"语言切换请求下降50%", metric:""},
+  {n:7, pri:"P2", title:"产出闭环埋点 + ROI证明", body:"接一层'用完之后有没有导出/复制/发送/写入CRM'的行为埋点，把'AI用法'和'成签单/回复'关联，输出'用AI销售 vs 不用 AI 销售'的对比数据（可复用 icbubi.ggs_mql_dist_sign_link 表）", owner:"数据+产品", target:"埋点覆盖率100%", metric:"证明AI用户人效比非AI用户高≥15%"},
+  {n:8, pri:"P2", title:"扩大 acciowork 域引导模式到普通域", body:"acciowork 域人均使用是普通域2倍（65 vs 32），说明有引导的账号效果显著。把该域的引导材料、群运营模式复制到其他36位普通销售", owner:"运营", target:"普通域人均查询数从32→50", metric:""},
+  {n:9, pri:"P2", title:"重新聚类'其他咨询'", body:"'其他咨询'占36%（861次）—— 采样发现里面混了多轮follow-up、翻译、闲聊。建议二次NLP聚类，把里面的'客户对话调优'、'翻译请求'独立成子类，识别真实沉睡/误用比例", owner:"数据", target:"'其他咨询'占比降至<20%", metric:""},
+  {n:10, pri:"P2", title:"周产出榜替代周使用榜", body:"当前看板量化'查询次数'，容易鼓励刷量。改成'高价值场景次数（报告+邮件+招商）+ 多轮对话深度分'两个复合指标，激励用户往深处走", owner:"运营", target:"高价值场景占比从7.6%→20%", metric:""}
+];
+
+// === Charts ===
+function initPareto(){
+  const arr = [["huvn.nguyn@acciowork.alibaba-inc.com", 228], ["hongphc.nguyen@acciowork.alibaba-inc.com", 182], ["xuanhien.ngo@acciowork.alibaba-inc.com", 153], ["litrungt02325063@alibaba-inc.com", 129], ["nguyntr02094014@alibaba-inc.com", 127], ["tranthith02437180@alibaba-inc.com", 114], ["n.nguyen@acciowork.alibaba-inc.com", 110], ["thng.l@acciowork.alibaba-inc.com", 105], ["phanthiki02531005@alibaba-inc.com", 81], ["tranthith02552211@alibaba-inc.com", 79], ["nam.nguyen@alibaba-inc.com", 79], ["xuandan.pham@acciowork.alibaba-inc.com", 78], ["phamnhi01@alibaba-inc.com", 74], ["nguyen.haiyen@acciowork.alibaba-inc.com", 73], ["cuminhkhi02377600@alibaba-inc.com", 64], ["tm.phanc@acciowork.alibaba-inc.com", 63], ["hathithuh02559998@alibaba-inc.com", 53], ["vnthnh.l@acciowork.alibaba-inc.com", 52], ["vithi.dng@acciowork.alibaba-inc.com", 48], ["trngqu.nguyn@acciowork.alibaba-inc.com", 45], ["nguynth02205179@alibaba-inc.com", 38], ["quyhi01984239@alibaba-inc.com", 33], ["thilinh.n@acciowork.alibaba-inc.com", 31], ["myngo2410@alibaba-inc.com", 29], ["dothiyvy02487461@alibaba-inc.com", 29], ["hongthom.do@acciowork.alibaba-inc.com", 28], ["symylinh@alibaba-inc.com", 27], ["thanhphuong@alibaba-inc.com", 27], ["chminh.vi@alibaba-inc.com", 25], ["vuthihong02568368@alibaba-inc.com", 23], ["directsales@alibaba-inc.com", 23], ["tathiminh02367340@alibaba-inc.com", 20], ["trnthin02041232@alibaba-inc.com", 17], ["yongzhu.zyz@acciowork.alibaba-inc.com", 16], ["dinhhoang02290820@alibaba-inc.com", 13], ["thibinh.truong@acciowork.alibaba-inc.com", 11], ["vuleducan02049621@alibaba-inc.com", 10], ["tranhuuye02266250@alibaba-inc.com", 8], ["mike.nguyen@acciowork.alibaba-inc.com", 8], ["khixng.h@acciowork.alibaba-inc.com", 7], ["servicevietnam@alibaba-inc.com", 6], ["anhduy.dao@alibaba-inc.com", 6], ["lutrngb02544885@alibaba-inc.com", 5], ["quynhanh.du@acciowork.alibaba-inc.com", 3], ["trngqu.nguyn@alibaba-inc.com", 3], ["anhtruchuynh@alibaba-inc.com", 2], ["dangthanh02011511@alibaba-inc.com", 2], ["my.nguyen@alibaba-inc.com", 1], ["nguyenthi02249677@alibaba-inc.com", 1], ["thuytien.le@alibaba-inc.com", 1], ["hothisang01759197@alibaba-inc.com", 1], ["hongthom.do@alibaba-inc.com", 1], ["voanhtuan02092993@alibaba-inc.com", 1], ["nguyenvan02129557@alibaba-inc.com", 1], ["cangyu.myf@acciowork.alibaba-inc.com", 1]];
+  const labels = arr.map((_,i)=>`#${i+1}`);
+  const vals = arr.map(a=>a[1]);
+  let sum=0, total=vals.reduce((a,b)=>a+b,0);
+  const cum = vals.map(v=>{sum+=v;return +(sum/total*100).toFixed(1)});
+  const ch = echarts.init(document.getElementById('pareto'));
+  ch.setOption({
+    tooltip:{trigger:'axis', formatter:p=>{
+      const i=p[0].dataIndex; return `${arr[i][0].split('@')[0]}<br>查询数: ${vals[i]}<br>累计占比: ${cum[i]}%`;
+    }},
+    grid:{left:50,right:60,top:30,bottom:40},
+    xAxis:{type:'category',data:labels,axisLabel:{fontSize:9,rotate:0,interval:4}},
+    yAxis:[
+      {type:'value',name:'查询数',nameTextStyle:{fontSize:10}},
+      {type:'value',name:'累计占比%',max:100,nameTextStyle:{fontSize:10}}
+    ],
+    series:[
+      {name:'查询数',type:'bar',data:vals,itemStyle:{color:'#ff6a00'}},
+      {name:'累计',type:'line',yAxisIndex:1,data:cum,smooth:true,itemStyle:{color:'#dc2626'},lineStyle:{width:2},symbol:'none',
+        markLine:{silent:true,symbol:'none',lineStyle:{color:'#dc2626',type:'dashed'},data:[{yAxis:80,label:{formatter:'80%线'}}]}}
+    ]
+  });
+}
+
+function initTierDist(){
+  const t = D.tier_dist;
+  const keys=['深度','重度','中度','轻度','尝鲜'];
+  const colors=['#dc2626','#ea580c','#f59e0b','#22c55e','#3b82f6'];
+  const ch = echarts.init(document.getElementById('tierDist'));
+  ch.setOption({
+    tooltip:{trigger:'item'},
+    legend:{bottom:0,fontSize:11},
+    grid:{left:60,right:20,top:20,bottom:60},
+    xAxis:{type:'category',data:keys},
+    yAxis:[
+      {type:'value',name:'人数'},
+      {type:'value',name:'查询数'}
+    ],
+    series:[
+      {name:'用户数',type:'bar',data:keys.map(k=>t[k].n),itemStyle:{color:(p)=>colors[p.dataIndex]},label:{show:true,position:'top',formatter:'{c}人'}},
+      {name:'查询数',type:'bar',yAxisIndex:1,data:keys.map(k=>t[k].q),itemStyle:{color:(p)=>colors[p.dataIndex],opacity:0.4},label:{show:true,position:'top',formatter:'{c}次'}}
+    ]
+  });
+}
+
+function initCatBar(){
+  const items = Object.entries(D.category).sort((a,b)=>b[1]-a[1]);
+  const ch = echarts.init(document.getElementById('catBar'));
+  ch.setOption({
+    tooltip:{trigger:'axis'},
+    grid:{left:100,right:60,top:10,bottom:30},
+    xAxis:{type:'value'},
+    yAxis:{type:'category',data:items.map(x=>x[0]).reverse()},
+    series:[{type:'bar',data:items.map(x=>x[1]).reverse(),itemStyle:{color:'#ff6a00'},label:{show:true,position:'right',formatter:v=>`${v.value} (${(v.value/2395*100).toFixed(1)}%)`}}]
+  });
+}
+
+function initFunnel(){
+  const ch = echarts.init(document.getElementById('funnel'));
+  ch.setOption({
+    tooltip:{trigger:'item'},
+    series:[{type:'funnel',left:'5%',top:10,bottom:10,width:'85%',min:0,max:100,minSize:'20%',maxSize:'100%',sort:'descending',gap:2,
+      label:{show:true,position:'inside',fontSize:11,formatter:'{b}\n{c}%'},
+      data:[
+        {value:100,name:'尝试过Accio(55/100=55%)'},
+        {value:78,name:'活跃(≥5次) 43人'},
+        {value:58,name:'稳定(≥20次) 32人'},
+        {value:69,name:'用过高价值场景 38人'},
+        {value:31,name:'重度玩家(>50次) 17人'}
+      ],itemStyle:{color:'#ff6a00'}
+    }]
+  });
+}
+
+function initRegion(){
+  const regs=Object.keys(D.region);
+  const ch=echarts.init(document.getElementById('regionBar'));
+  ch.setOption({
+    tooltip:{trigger:'axis'},
+    legend:{bottom:0,fontSize:11},
+    grid:{left:50,right:50,top:20,bottom:40},
+    xAxis:{type:'category',data:regs},
+    yAxis:[{type:'value',name:'人均查询'},{type:'value',name:'用户数'}],
+    series:[
+      {name:'人均查询',type:'bar',data:regs.map(r=>D.region[r].per),itemStyle:{color:'#ff6a00'},label:{show:true,position:'top'}},
+      {name:'用户数',type:'line',yAxisIndex:1,data:regs.map(r=>D.region[r].users),itemStyle:{color:'#3b82f6'},lineStyle:{width:2}}
+    ]
+  });
+
+  const ch2=echarts.init(document.getElementById('regionHV'));
+  ch2.setOption({
+    tooltip:{trigger:'axis'},
+    grid:{left:50,right:20,top:20,bottom:30},
+    xAxis:{type:'category',data:regs},
+    yAxis:{type:'value',name:'高价值场景占比%',max:10},
+    series:[{type:'bar',data:regs.map(r=>D.region[r].hv),itemStyle:{color:function(p){const v=p.value;return v>=7?'#16a34a':v>=6?'#f59e0b':'#dc2626'}},label:{show:true,position:'top',formatter:'{c}%'}}]
+  });
+
+  const cats=['客户开发/线索','行业/市场分析','产品/运营','平台规则/知识','邮件/触达','报告/方案','招商策略','其他咨询'];
+  const rc=D.region_cat;
+  const ch3=echarts.init(document.getElementById('regionCat'));
+  ch3.setOption({
+    tooltip:{trigger:'axis'},
+    legend:{bottom:0,fontSize:11},
+    grid:{left:60,right:20,top:30,bottom:60},
+    xAxis:{type:'category',data:cats,axisLabel:{fontSize:11}},
+    yAxis:{type:'value',name:'占比%'},
+    series:['越南','台湾','韩国','香港'].map((r,i)=>({
+      name:r,type:'bar',data:cats.map(c=>rc[r][c]),
+      itemStyle:{color:['#ff6a00','#3b82f6','#16a34a','#f59e0b'][i]}
+    }))
+  });
+}
+
+function initDaily(){
+  const ch=echarts.init(document.getElementById('daily'));
+  ch.setOption({
+    tooltip:{trigger:'axis'},
+    legend:{bottom:0,fontSize:11},
+    grid:{left:50,right:50,top:20,bottom:50},
+    xAxis:{type:'category',data:D.daily.map(x=>x.d)},
+    yAxis:[{type:'value',name:'查询数'},{type:'value',name:'活跃人数'}],
+    series:[
+      {name:'查询数',type:'bar',data:D.daily.map(x=>x.q),itemStyle:{color:'#ff6a00'}},
+      {name:'活跃人数',type:'line',yAxisIndex:1,data:D.daily.map(x=>x.u),itemStyle:{color:'#dc2626'},smooth:true,lineStyle:{width:2}}
+    ]
+  });
+}
+
+function initTierRadar(){
+  const cats=['客户开发/线索','行业/市场分析','产品/运营','平台规则/知识','邮件/触达','报告/方案','其他咨询'];
+  const ch=echarts.init(document.getElementById('tierRadar'));
+  ch.setOption({
+    tooltip:{},
+    legend:{bottom:0,fontSize:11},
+    radar:{indicator:cats.map(c=>({name:c,max:40})),radius:'65%'},
+    series:[{type:'radar',data:[
+      {name:'深度用户',value:cats.map(c=>D.tier_cat.deep[c]||0),itemStyle:{color:'#ff6a00'},areaStyle:{opacity:0.3}},
+      {name:'尝鲜用户',value:cats.map(c=>D.tier_cat.light[c]||0),itemStyle:{color:'#3b82f6'},areaStyle:{opacity:0.3}}
+    ]}]
+  });
+}
+
+function initDomain(){
+  const dm=D.domain;
+  const ch=echarts.init(document.getElementById('domainBar'));
+  ch.setOption({
+    tooltip:{trigger:'axis'},
+    legend:{bottom:0,fontSize:11},
+    grid:{left:60,right:50,top:20,bottom:40},
+    xAxis:{type:'category',data:Object.keys(dm).map(k=>k==='acciowork.alibaba-inc.com'?'accio域(19人)':'普通域(36人)')},
+    yAxis:[{type:'value',name:'总查询'},{type:'value',name:'人均查询'}],
+    series:[
+      {name:'总查询',type:'bar',data:Object.values(dm).map(x=>x.queries),itemStyle:{color:'#ff6a00'},label:{show:true,position:'top'}},
+      {name:'人均',type:'bar',yAxisIndex:1,data:Object.values(dm).map(x=>x.per),itemStyle:{color:'#dc2626'},label:{show:true,position:'top',formatter:'{c}次/人'}}
+    ]
+  });
+}
+
+// KOL & Fail lists
+function renderKOL(){
+  const el=document.getElementById('kolList');
+  el.innerHTML=KOL.map(k=>`
+    <div class="prompt-card">
+      <div class="who">@${k.user}<span class="cat">${k.cat}</span></div>
+      <div class="vn">${escapeHTML(k.query_vn)}</div>
+      ${k.query_zh?`<div class="zh">🔤 ${escapeHTML(k.query_zh)}</div>`:''}
+    </div>
+  `).join('');
+}
+function renderFail(){
+  const el=document.getElementById('failList');
+  el.innerHTML=FAIL.map(k=>`
+    <div class="prompt-card fail">
+      <div class="who">@${k.user}<span class="cat">${k.cat}</span></div>
+      <div class="vn">${escapeHTML(k.query_vn)}</div>
+      ${k.query_zh?`<div class="zh">🔤 ${escapeHTML(k.query_zh)}</div>`:''}
+    </div>
+  `).join('');
+}
+
+function renderUserTable(){
+  const search=document.getElementById('userSearch').value.toLowerCase();
+  const tier=document.getElementById('tierFilter').value;
+  const dom=document.getElementById('domainFilter').value;
+  const rows=USERS.filter(u=>{
+    if(search && !(u['邮箱']||'').toLowerCase().includes(search))return false;
+    if(tier && u['分层']!==tier)return false;
+    if(dom && u['域名']!==dom)return false;
+    return true;
+  });
+  document.getElementById('userTbody').innerHTML=rows.map((u,i)=>`
+    <tr>
+      <td>${i+1}</td>
+      <td style="font-family:monospace;font-size:11px">${u['邮箱']}</td>
+      <td><span class="tag tag-${u['分层']}">${u['分层']}</span></td>
+      <td style="font-size:11px">${u['域名']}</td>
+      <td><b>${u['查询数']}</b></td>
+      <td>${u['活跃天数']}</td>
+      <td>${u['客户开发/线索']||0}</td>
+      <td>${u['行业/市场分析']||0}</td>
+      <td>${u['产品/运营']||0}</td>
+      <td>${u['平台规则/知识']||0}</td>
+      <td>${u['报告/方案']||0}</td>
+      <td>${u['邮件/触达']||0}</td>
+      <td>${u['招商策略']||0}</td>
+      <td>${u['其他咨询']||0}</td>
+    </tr>
+  `).join('');
+}
+
+function renderRecs(){
+  document.getElementById('recList').innerHTML=RECS.map(r=>`
+    <li class="rec-item">
+      <div class="rec-head">
+        <div class="rec-num">${r.n}</div>
+        <div class="rec-title">${r.title}</div>
+        <div class="rec-pri pri-${r.pri}">${r.pri}</div>
+      </div>
+      <div class="rec-body">${r.body}</div>
+      <div class="rec-meta">
+        <span>👤 负责方: <b>${r.owner}</b></span>
+        <span>🎯 目标: ${r.target}</span>
+        ${r.metric?`<span>📊 指标: ${r.metric}</span>`:''}
+      </div>
+    </li>
+  `).join('');
+}
+
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c])}
+
+// Init all
+window.addEventListener('load',()=>{
+  initPareto();
+  initTierDist();
+  initCatBar();
+  initFunnel();
+  initRegion();
+  initDaily();
+  initTierRadar();
+  initDomain();
+  renderKOL();
+  renderFail();
+  renderUserTable();
+  renderRecs();
+  ['userSearch','tierFilter','domainFilter'].forEach(id=>{
+    document.getElementById(id).addEventListener('input',renderUserTable);
+    document.getElementById(id).addEventListener('change',renderUserTable);
+  });
+  // Nav highlight
+  const links=document.querySelectorAll('.nav a');
+  window.addEventListener('scroll',()=>{
+    let cur='';
+    document.querySelectorAll('.section').forEach(s=>{
+      if(s.getBoundingClientRect().top<200)cur=s.id;
+    });
+    links.forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+cur));
+  });
+});
+</script>
+</body>
+</html>
