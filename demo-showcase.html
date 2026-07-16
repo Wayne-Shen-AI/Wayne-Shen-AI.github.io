@@ -221,6 +221,21 @@
       border-radius:10px; padding:12px 14px; font-size:13px; color:var(--muted); line-height:1.6; }
     .ins b { color:var(--accent); display:block; margin-bottom:3px; }
 
+    /* Quick-start steps */
+    .steps { display:flex; flex-direction:column; gap:12px; margin-top:8px; }
+    .step { display:flex; gap:16px; background:var(--surface); border:1px solid var(--border);
+      border-radius:14px; padding:18px 20px; box-shadow:0 2px 8px rgba(37,99,235,0.04); }
+    .step-num { flex-shrink:0; width:34px; height:34px; border-radius:50%; background:var(--accent);
+      color:#fff; font-weight:800; font-size:16px; display:flex; align-items:center; justify-content:center; }
+    .step.optional .step-num { background:#94a3b8; }
+    .step-main { flex:1; }
+    .step-title { font-size:16px; font-weight:700; color:var(--fg); display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .step-desc { font-size:14px; color:var(--muted); line-height:1.7; margin-top:5px; }
+    .step-pill { font-size:11px; font-weight:600; padding:3px 10px; border-radius:999px; }
+    .step-pill.opt { background:rgba(100,116,139,0.12); color:#64748b; }
+    .step-pill.need { background:rgba(217,119,6,0.1); color:var(--gold); }
+    .step-act { display:inline-block; margin-top:8px; font-size:13px; font-weight:600; color:var(--accent); }
+
     /* Responsive */
     @media (max-width: 768px) {
       .hero h1 { font-size: 32px; }
@@ -249,6 +264,7 @@
   <!-- Sticky Nav -->
   <nav class="tabs">
     <div class="tabs-inner">
+      <a href="#start">快速开始</a>
       <a href="#s0">开场</a>
       <a href="#install">第一步·装插件</a>
       <a href="#s1">第二步·找客和建档</a>
@@ -262,6 +278,68 @@
   </nav>
 
   <main class="wrap">
+
+    <!-- Quick Start -->
+    <section id="start">
+      <div class="sec-label"><span>快速开始</span></div>
+      <h2 class="sec-title">6 步上手</h2>
+      <p class="sec-desc">从零到能用起来的完整清单——前 4 步是必做的安装配置，后 2 步是进阶的自动化选做项。</p>
+      <div class="steps">
+
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-main">
+            <div class="step-title">下载安装 AccioWork</div>
+            <div class="step-desc">到官网下载并安装 AccioWork 客户端，这是后续所有找客 / 调研 / 建档 / 触达能力的运行底座。</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-main">
+            <div class="step-title">开通角色权限 <span class="step-pill need">需申请</span></div>
+            <div class="step-desc">如果希望以<strong style="color:var(--fg);">销售业绩组</strong>的身份进行创作（关联 CRM 私海 / 公海、业绩归属），联系 <strong style="color:var(--fg);">申海</strong> 开通对应角色权限。</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-main">
+            <div class="step-title">安装 SalesBuddy 插件</div>
+            <div class="step-desc">在 AccioWork 插件市场安装 <strong style="color:var(--fg);">SalesBuddy</strong>，即得整套 GGS 新签作业 Skill（找客 / 调研 / 建档 / 触达 / 定时雷达 / 行业洞察）。</div>
+            <a class="step-act" href="#install">查看安装录屏 →</a>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-main">
+            <div class="step-title">安装 LeadsFinder 增强包等技能</div>
+            <div class="step-desc">把增强包的文件夹路径或压缩包丢进 SalesBuddy，一句提示词即可安装：<code style="font-size:12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:2px 8px;color:var(--accent);">安装这里面的新版技能，如果有重复的，更新覆盖</code></div>
+            <a class="step-act" href="leadsfinder-pro-pack.zip" download>⬇ 下载 LeadsFinder 增强包 (zip) →</a>
+          </div>
+        </div>
+
+        <div class="step optional">
+          <div class="step-num">5</div>
+          <div class="step-main">
+            <div class="step-title">把 SalesBuddy 丢给 QoderWork 自装 <span class="step-pill opt">选做</span></div>
+            <div class="step-desc">想在 QoderWork 里也用上同一套能力？把 SalesBuddy 打包丢给 QoderWork，让它自行安装即可。这里直接给现成文件包：</div>
+            <a class="step-act" href="ggs-sales-assistant.zip" download>⬇ 下载 ggs-sales-assistant.zip →</a>
+          </div>
+        </div>
+
+        <div class="step optional">
+          <div class="step-num">6</div>
+          <div class="step-main">
+            <div class="step-title">QoderWork 连接钉钉 · 信息推送 <span class="step-pill opt">选做</span></div>
+            <div class="step-desc">在 QoderWork 里配置定时任务后连接钉钉，把「今日推荐客户」等雷达结果自动推送到 Leads 小群，销售早晨打开即见。推送效果见第五步的实际样式。</div>
+            <a class="step-act" href="#s5">查看钉钉推送样例 →</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
 
     <!-- S0 Opening -->
     <section id="s0">
